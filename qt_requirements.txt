@@ -1,0 +1,13 @@
+qt5-default
+qtquickcontrols2-5-dev 
+qtquickcontrols2-5-dev 
+qtbase5-dev
+libqt5quick5
+libqt5quickshapes5
+libqt5quickcontrols2-5 
+qtdeclarative5-dev
+qml-module-qtquick-layouts
+qml-module-qtquick-window2
+qml-module-qtquick-controls2
+qml-module-qtquick-shapes
+qml-module-qtquick2
