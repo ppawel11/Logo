@@ -9,6 +9,7 @@ StringStreamSource::StringStreamSource(std::istringstream & _input):
 char StringStreamSource::getNextChar() {
     char next_char = input.get();
 
+    // todo: obsługa wszystkich sekwencji znaków nowej linii CRLF
     if( next_char == '\n' )
     {
         current_position.sign = 0;

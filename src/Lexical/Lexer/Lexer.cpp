@@ -1,6 +1,6 @@
 #include "Lexer.h"
 
-Token Lexer::getNextToken() {
+const Token &Lexer::getNextToken() {
     if( scanner == nullptr )
         throw std::runtime_error("Lexer scanner not initialized");
 
@@ -33,33 +33,29 @@ Token Lexer::getNextToken() {
 
 Token Lexer::getStringToken() {
     std::string str = "";
-    int string_length = 0;
     char next_char = scanner->getNextChar();
-    bool escape = false;
 
-    while( !scanner->eof() )
+    while( !scanner->eof() && next_char != '"' )  //
     {
-        if( next_char == 0x5C && !escape )
+        if( next_char == 0x5C )
         {
-            escape = true;
-        }
-        else
-        {
-            if (next_char == '"' && !escape) {
-                return Token(TokenType::STRING, current_token_position, str);
-            }
-
-            if(++string_length > max_string_length )
+            next_char = scanner->getNextChar();
+            if( scanner->eof() )
             {
-                throw std::runtime_error("string too long");
+                throw std::runtime_error("eof while scanning string");
             }
-
-            str.append(1, next_char);
-            escape = false;
         }
+
+        str.append(1, next_char);
+        if( str.length() > max_string_length )
+        {
+            throw std::runtime_error("string too long");
+        }
+
         next_char = scanner->getNextChar();
     }
-    return Token( TokenType::INVALID, current_token_position );
+
+    return Token( TokenType::STRING, current_token_position, str );
 }
 
 Token Lexer::getNumericToken() {

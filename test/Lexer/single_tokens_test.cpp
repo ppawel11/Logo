@@ -124,29 +124,29 @@ TEST_F(single_token_test, string_token_test )
     Lexer lexer = Lexer(scanner);
 
     ASSERT_EQ(lexer.getNextToken().getType(), TokenType::STRING);
-    ASSERT_EQ( lexer.getCurrentToken().getLiteralValue(),napis_bez);
+    ASSERT_EQ( lexer.getCurrentToken().getLiteralValue(), napis_bez);
 }
 
 TEST_F(single_token_test, too_long_string_token_test )
 {
-    std::string napis = "\"abcdefg\"";
+    std::string napis = "\"abcdefghi\"";
 
     std::istringstream input(napis);
     SourceInterface * scanner = new StringStreamSource(input);
     Lexer lexer = Lexer(scanner);
-    lexer.setMaxStringLength(6);
+    lexer.setMaxStringLength(8);
 
     ASSERT_ANY_THROW(lexer.getNextToken());
 }
 
 TEST_F(single_token_test, not_too_long_string_token_test )
 {
-    std::string napis = "\"abcdefg\"";
+    std::string napis = "\\\"abcdefg\\\"";
 
     std::istringstream input(napis);
     SourceInterface * scanner = new StringStreamSource(input);
     Lexer lexer = Lexer(scanner);
-    lexer.setMaxStringLength(7);
+    lexer.setMaxStringLength(9);
 
     ASSERT_NO_THROW(lexer.getNextToken());
 }

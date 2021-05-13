@@ -66,7 +66,7 @@ public:
 
     const Token &getCurrentToken() const;
 
-    Token getNextToken();
+    const Token &getNextToken();
 
     int getMaxLiteralLength() const;
 
