@@ -29,7 +29,8 @@ class Lexer {
                 std::pair<std::string, TokenType>("or", TokenType::OR),
                 std::pair<std::string, TokenType>("false", TokenType::FALSE),
                 std::pair<std::string, TokenType>("true", TokenType::TRUE),
-                std::pair<std::string, TokenType>("return", TokenType::RETURN)
+                std::pair<std::string, TokenType>("return", TokenType::RETURN),
+                std::pair<std::string, TokenType>("var", TokenType::VAR)
             };
 
     std::map<char, TokenType> single_char_token_map =
