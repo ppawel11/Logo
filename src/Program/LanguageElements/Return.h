@@ -3,13 +3,14 @@
 
 #include "LanguageElement.h"
 #include "Variables/Assignable.h"
+#include "../Program.h"
 
 class Return: public LanguageElement {
     Assignable content;
 public:
     explicit Return( Assignable content_ ): content{ content_ }, LanguageElement() {}
 
-    void be_handled(Parser *parser) override {
+    void be_handled(Interpreter *interpreter) override {
 
     }
 };

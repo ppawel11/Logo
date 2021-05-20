@@ -3,9 +3,9 @@
 
 #include <utility>
 
-#include "../Statement.h"
 #include "Block.h"
 #include "Logical/OrCondition.h"
+#include "../Program.h"
 
 class If: public LanguageElement {
     Block if_block;
@@ -19,7 +19,7 @@ public:
         else_block{std::move( else_block_ )}
     {}
 
-    void be_handled(Parser *parser) override {
+    void be_handled(Interpreter *interpreter) override {
 
     }
 };

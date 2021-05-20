@@ -10,6 +10,10 @@ class Arguments {
     std::vector<Assignable> args;
 
 public:
+    Arguments():
+        args {}
+    {}
+
     explicit Arguments(std::vector <Assignable> args_):
         args{std::move(args_)}
     {}

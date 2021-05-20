@@ -15,7 +15,7 @@ public:
     WhileLoop(OrCondition condition_, Block loop_ ):
         condition{std::move( condition_ )}, loop{std::move(loop_)}, LanguageElement() {}
 
-    void be_handled(Parser *parser) override {
+    void be_handled(Interpreter *interpreter) override {
 
     }
 };

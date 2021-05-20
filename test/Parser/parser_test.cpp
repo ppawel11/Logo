@@ -25,5 +25,4 @@ TEST_F(parser_test, parser_basic_test )
     Lexer lexer = Lexer(scanner);
     Parser parser = Parser(lexer);
     Program program = parser.parseProgram();
-    int a = 1;
 }

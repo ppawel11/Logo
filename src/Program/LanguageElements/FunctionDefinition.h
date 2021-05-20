@@ -17,7 +17,7 @@ public:
     FunctionDefinition(std::string name_, std::vector<std::string> parameters_, Block body_):
             name{std::move( name_ )}, parameters{std::move( parameters_ )}, body{std::move( body_ )} {}
 
-    void be_handled(Parser *parser) override {
+    void be_handled(Interpreter *interpreter) override {
 
     }
 

@@ -74,7 +74,6 @@ set(SOURCE
         src/Program/LanguageElements/Logical/RelationType.h
         src/Program/Program.cpp
         src/Program/Program.h
-        src/Program/Statement.h
         src/Parsing/Parser.cpp
         src/Parsing/Parser.h)
 

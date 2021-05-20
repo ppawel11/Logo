@@ -4,6 +4,8 @@
 #include <string>
 #include "LanguageElement.h"
 #include "Variables/Assignable.h"
+#include "../Program.h"
+#include <iostream>
 
 class VariableAssignment: public LanguageElement {
     std::string label;
@@ -16,8 +18,8 @@ public:
         LanguageElement()
     {}
 
-    void be_handled(Parser *parser) override {
-
+    void be_handled(Interpreter *interpreter) override {
+        std::cout<<"variable assignent"<<std::endl;
     }
 };
 

@@ -3,13 +3,15 @@
 
 #include <vector>
 #include "AndCondition.h"
+#include "../Variables/Assignable.h"
 
-class OrCondition {
+class OrCondition: public Assignable {
     std::vector<AndCondition> elements;
 
 public:
     explicit OrCondition( std::vector<AndCondition> elements_):
-        elements{ std::move(elements_) }
+        elements{ std::move(elements_) },
+        Assignable()
     {}
 };
 

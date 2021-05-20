@@ -2,10 +2,24 @@
 #define TKOM_VARIABLEDECLARATION_H
 
 #include "LanguageElement.h"
+#include "Variables/Assignable.h"
+#include <string>
+#include <utility>
 
 class VariableDeclaration: public LanguageElement {
+    std::string label;
+    Assignable value;
 public:
-    void be_handled(Parser *parser) override;
+    VariableDeclaration(std::string label_, Assignable value_):
+        label {std::move( label_ )},
+        value { value_ },
+        LanguageElement()
+    {
+    }
+
+    void be_handled(Interpreter *interpreter) override {
+
+    }
 };
 
 

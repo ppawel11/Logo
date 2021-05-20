@@ -91,7 +91,7 @@ std::optional<FunctionDefinition> Parser::tryToParseFuncDef() {
             }
         }
 
-        if( lexer.getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
+        if( lexer.getNextToken().getType() != TokenType::PARENTHESIS_CLOSE )
         {
             throw std::runtime_error("func def invalid");
         }
@@ -146,7 +146,7 @@ std::optional<LanguageElement *> Parser::tryToParseIf() {
 
         lexer.getNextToken();
 
-        if(!(condition = tryToParseCondition()) ||
+        if(!(condition = tryToParseOrCondition()) ||
             lexer.getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
         {
             throw std::runtime_error("if invalid");
@@ -213,7 +213,7 @@ std::optional<LanguageElement *> Parser::tryToParseVarDeclaration() {
             throw std::runtime_error("var declaration invalid");
         }
 
-        return new VariableDeclaration();
+        return new VariableDeclaration( var_name, value.value() );
     }
     return std::nullopt;
 }
@@ -260,10 +260,7 @@ std::optional<LanguageElement*> Parser::tryToParseFuncCall(const std::string& la
     {
         lexer.getNextToken();
 
-
         std::optional<Arguments> arguments = tryToParseArguments();
-        // func_call = label, (, [ arguments ], )
-        // arguments = assignable,  { ',' , assignable }
 
         if( lexer.getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
         {
@@ -275,7 +272,7 @@ std::optional<LanguageElement*> Parser::tryToParseFuncCall(const std::string& la
         if( arguments )
             return new FunctionCall(label, arguments.value());
         else
-            return new FunctionCall(label, Arguments({}));
+            return new FunctionCall(label, Arguments());
     }
 
     return std::nullopt;
@@ -293,7 +290,7 @@ std::optional<LanguageElement*> Parser::tryToParseWhileLoop() {
 
         lexer.getNextToken();
 
-        if(!(condition = tryToParseCondition()) ||
+        if(!(condition = tryToParseOrCondition()) ||
             lexer.getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
         {
             throw std::runtime_error("while invalid");
@@ -409,7 +406,7 @@ std::optional<Assignable> Parser::tryToParseAssignable() {
     std::optional<Assignable> assignable;
 
     if(( assignable = tryToParseList() ) ||
-       ( assignable = tryToParseAdditiveExpression() ) ||
+       ( assignable = tryToParseOrCondition() ) ||
        ( assignable = tryToParseString() ) )
     {
         return assignable;
@@ -480,7 +477,7 @@ std::optional<MultiplyExpression> Parser::tryToParseMultiplyExpression() {
 
             if( !(math_element = tryToParseMathElement()) )
             {
-                throw std::runtime_error("parsing expression invalid");
+                throw std::runtime_error("multiply expression invalid");
             }
 
             elements.push_back(math_element.value());
@@ -551,7 +548,6 @@ std::optional<List> Parser::tryToParseList() {
             }
             return List( elements );
         }
-        throw std::runtime_error("elements invalid");
     }
     return std::nullopt;
 }
@@ -606,7 +602,7 @@ std::optional<Assignable> Parser::tryToParseString() {
     return std::nullopt;
 }
 
-std::optional<OrCondition> Parser::tryToParseCondition() {
+std::optional<OrCondition> Parser::tryToParseOrCondition() {
     // condition = andCond, { orOp, andCond }
     if( std::optional<AndCondition> condition = tryToParseAndCondition() )
     {
@@ -725,7 +721,7 @@ std::optional<OrCondition> Parser::tryToParseParentCondition() {
     if( lexer.getCurrentToken().getType() == TokenType::PARENTHESIS_OPEN )
     {
         lexer.getNextToken();
-        if ( std::optional<OrCondition> cond = tryToParseCondition() )
+        if ( std::optional<OrCondition> cond = tryToParseOrCondition() )
         {
             if ( lexer.getCurrentToken().getType() == TokenType::PARENTHESIS_CLOSE )
             {

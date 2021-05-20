@@ -10,7 +10,6 @@
 #include "../Lexical/Token/Token.h"
 
 #include "../Program/Program.h"
-#include "../Program/Statement.h"
 #include "../Program/LanguageElements/Arguments.h"
 #include "../Program/LanguageElements/Variables/Assignable.h"
 #include "../Program/LanguageElements/FunctionBody.h"
@@ -68,7 +67,7 @@ private:
 
     std::optional<Assignable> tryToParseAssignable();
 
-    std::optional<OrCondition> tryToParseCondition();
+    std::optional<OrCondition> tryToParseOrCondition();
 
     std::optional<AdditiveExpression> tryToParseAdditiveExpression();
 
@@ -83,8 +82,6 @@ private:
     std::optional<Arguments> tryToParseArguments();
 
     std::optional<AdditiveExpression> tryToParseParentExpression();
-
-    std::optional<Assignable> tryToParseLabelOrFunctionCall();
 
     std::optional<Assignable> tryToParseString();
 

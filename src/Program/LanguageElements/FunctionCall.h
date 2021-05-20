@@ -4,6 +4,7 @@
 #include "LanguageElement.h"
 #include "Variables/Assignable.h"
 #include "Arguments.h"
+#include "../Program.h"
 #include <string>
 #include <utility>
 #include <vector>
@@ -16,7 +17,7 @@ public:
     FunctionCall(std::string name_, Arguments arguments_):
         name{std::move( name_ )}, arguments{std::move( arguments_ )}, LanguageElement() {}
 //
-    void be_handled(Parser *parser) override {
+    void be_handled(Interpreter *interpreter) override {
 
     }
 //    explicit FunctionCall(std::string name_):

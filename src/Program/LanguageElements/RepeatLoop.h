@@ -6,6 +6,7 @@
 #include "Block.h"
 #include <utility>
 #include <vector>
+#include <iostream>
 
 class RepeatLoop: public LanguageElement {
     AdditiveExpression repeats;
@@ -18,8 +19,8 @@ public:
         LanguageElement()
     {}
 
-    void be_handled(Parser *parser) override {
-
+    void be_handled(Interpreter *interpreter) override {
+        std::cout<<"repeat loop"<<std::endl;
     }
 };
 

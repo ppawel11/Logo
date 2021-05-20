@@ -1,11 +1,11 @@
 #ifndef TKOM_LANGUAGEELEMENT_H
 #define TKOM_LANGUAGEELEMENT_H
 
-class Parser;
+class Interpreter;
 
 class LanguageElement {
 public:
-    virtual void be_handled(Parser* parser) = 0;
+    virtual void be_handled(Interpreter *interpreter) = 0;
 };
 
 

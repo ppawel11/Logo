@@ -6,6 +6,7 @@
 #include <vector>
 #include "LanguageElement.h"
 #include "Block.h"
+#include "../Program.h"
 
 class ForEachLoop: public LanguageElement {
     std::string value_label;
@@ -18,7 +19,7 @@ public:
         container_label{std::move( container_label_ )},
         loop{ loop_ } {}
 
-    virtual void be_handled(Parser* parser) {}
+    virtual void be_handled(Interpreter *interpreter) {}
 };
 
 
