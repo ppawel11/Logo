@@ -14,6 +14,10 @@ public:
         }
         type = type_;
     }
+
+    OperationType getType() const {
+        return type;
+    }
 };
 
 #endif //TKOM_ADDITIVEOPERATOR_H

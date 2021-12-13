@@ -11,15 +11,15 @@
 class ForEachLoop: public LanguageElement {
     std::string value_label;
     std::string container_label;
-    Block loop;
+    LanguageElement* loop;
 
 public:
-    ForEachLoop(std::string value_label_, std::string container_label_, Block loop_):
+    ForEachLoop(std::string value_label_, std::string container_label_, LanguageElement* loop_):
         value_label{std::move( value_label_ )},
         container_label{std::move( container_label_ )},
         loop{ loop_ } {}
 
-    virtual void be_handled(Interpreter *interpreter) {}
+    void be_handled(Interpreter *interpreter) override;
 };
 
 

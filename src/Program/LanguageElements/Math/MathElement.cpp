@@ -1,7 +1,7 @@
 #include "MathElement.h"
-#include "AdditiveExpression.h"
+#include "../../../Interpreter/Interpreter.h"
 
-MathElement::MathElement(AdditiveExpression* parent_expression_, bool is_negated_):
-        parent_expression { std::move(parent_expression_) },
-        is_negated { is_negated_ }
-{}
+void MathElement::be_evaluated(Interpreter *interpreter) {
+    interpreter->evaluate(this);
+}
+

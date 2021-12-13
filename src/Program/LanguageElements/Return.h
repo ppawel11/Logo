@@ -6,13 +6,13 @@
 #include "../Program.h"
 
 class Return: public LanguageElement {
-    Assignable content;
+    Assignable * value;
 public:
-    explicit Return( Assignable content_ ): content{ content_ }, LanguageElement() {}
+    explicit Return( Assignable * value_ ): value{ value_ }, LanguageElement() {}
 
-    void be_handled(Interpreter *interpreter) override {
+    void be_handled(Interpreter *interpreter) override;
 
-    }
+    Assignable *getValue() const;
 };
 
 

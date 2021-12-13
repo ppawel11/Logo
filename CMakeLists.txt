@@ -50,6 +50,7 @@ set(SOURCE
         src/Program/LanguageElements/WhileLoop.cpp
         src/Program/LanguageElements/WhileLoop.h
         src/Program/LanguageElements/Math/AdditiveExpression.h
+        src/Program/LanguageElements/Math/AdditiveExpression.cpp
         src/Program/LanguageElements/Math/AdditiveOperator.cpp
         src/Program/LanguageElements/Math/AdditiveOperator.h
         src/Program/LanguageElements/Math/MathElement.h
@@ -67,15 +68,24 @@ set(SOURCE
         src/Program/LanguageElements/Logical/OrCondition.h
         src/Program/LanguageElements/Logical/EqualityCondition.h
         src/Program/LanguageElements/Logical/EqualityCondition.cpp
-        src/Program/LanguageElements/Logical/LogicalElement.h
-        src/Program/LanguageElements/Logical/LogicalElement.cpp
         src/Program/LanguageElements/Logical/RelationalCondition.h
         src/Program/LanguageElements/Logical/RelationalCondition.cpp
         src/Program/LanguageElements/Logical/RelationType.h
         src/Program/Program.cpp
         src/Program/Program.h
         src/Parsing/Parser.cpp
-        src/Parsing/Parser.h)
+        src/Parsing/Parser.h
+        src/Interpreter/Interpreter.cpp
+        src/Interpreter/Interpreter.h
+        src/Program/LanguageElements/Variables/Bool.cpp
+        src/Program/LanguageElements/Variables/Bool.h
+        src/Program/LanguageElements/Variables/Number.cpp
+        src/Program/LanguageElements/Variables/Number.h
+        src/Program/LanguageElements/Math/NegatedMathElement.cpp
+        src/Program/LanguageElements/Math/NegatedMathElement.h
+        src/Program/LanguageElements/Variables/Label.cpp
+        src/Program/LanguageElements/Variables/Label.h
+        )
 
 
 set(TEST_SOURCE
@@ -84,7 +94,7 @@ set(TEST_SOURCE
         test/Source/string_source_test.cpp
         test/Token/token_test.cpp
         test/Parser/parser_test.cpp
-        )
+        src/Program/LanguageElements/Logical/NegatedLogicalElement.cpp src/Program/LanguageElements/Logical/NegatedLogicalElement.h)
 
 if(GUI)
     qt5_add_resources(QML_RESOURCES qrc/tkom.qrc)
@@ -98,7 +108,7 @@ add_executable(TKOM
         main.cpp
         ${SOURCE}
         ${QML_RESOURCES}
-)
+        src/Interpreter/Scope.cpp src/Interpreter/Scope.h src/Interpreter/ScopeStack.cpp src/Interpreter/ScopeStack.h src/Interpreter/CallContext.cpp src/Interpreter/CallContext.h)
 
 add_executable(TKOM_testing
         ${SOURCE}

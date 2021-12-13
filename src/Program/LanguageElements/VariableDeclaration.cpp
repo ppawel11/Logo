@@ -1,2 +1,14 @@
 #include "VariableDeclaration.h"
+#include "../../Interpreter/Interpreter.h"
 
+void VariableDeclaration::be_handled(Interpreter *interpreter) {
+    interpreter->interpret(this);
+}
+
+const std::string &VariableDeclaration::getLabel() const {
+    return label;
+}
+
+Assignable *VariableDeclaration::getValue() const {
+    return value;
+}

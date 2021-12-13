@@ -6,13 +6,18 @@
 #include "../Variables/Assignable.h"
 
 class OrCondition: public Assignable {
-    std::vector<AndCondition> elements;
+    // and_condition, { or_operator, and_condition }
+    std::vector<Assignable*> elements;
 
 public:
-    explicit OrCondition( std::vector<AndCondition> elements_):
+    explicit OrCondition( std::vector<Assignable*> elements_):
         elements{ std::move(elements_) },
         Assignable()
     {}
+
+    const std::vector<Assignable *> &getElements() const;
+
+    void be_evaluated(Interpreter *interpreter) override;
 };
 
 

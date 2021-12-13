@@ -3,21 +3,26 @@
 
 #include "LanguageElement.h"
 #include "Block.h"
+#include "Variables/Assignable.h"
 #include <string>
 #include <utility>
 #include <vector>
 
-class FunctionDefinition: public LanguageElement {
+class FunctionDefinition: public LanguageElement, public Assignable {
     std::string name;
     std::vector<std::string> parameters;
-    Block body;
+    LanguageElement* body;
 
 public:
 
-    FunctionDefinition(std::string name_, std::vector<std::string> parameters_, Block body_):
-            name{std::move( name_ )}, parameters{std::move( parameters_ )}, body{std::move( body_ )} {}
+    FunctionDefinition(std::string name_, std::vector<std::string> parameters_, LanguageElement* body_):
+            name{std::move( name_ )}, parameters{std::move( parameters_ )}, body{ body_ } {}
+
 
     void be_handled(Interpreter *interpreter) override {
+
+    }
+    void be_evaluated(Interpreter *interpreter) override {
 
     }
 
@@ -37,12 +42,12 @@ public:
         FunctionDefinition::parameters = parameters_;
     }
 
-    const Block &getBody() const {
+    LanguageElement *getBody() const {
         return body;
     }
 
-    void setBody(const Block &body_) {
-        FunctionDefinition::body = body_;
+    void setBody(LanguageElement *body) {
+        FunctionDefinition::body = body;
     }
 };
 

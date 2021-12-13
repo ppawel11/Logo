@@ -9,19 +9,21 @@
 #include <iostream>
 
 class RepeatLoop: public LanguageElement {
-    AdditiveExpression repeats;
-    Block loop;
+    Assignable * repeats;
+    LanguageElement* loop;
 
 public:
-    RepeatLoop(AdditiveExpression repeats_, Block loop_ ):
+    RepeatLoop(Assignable * repeats_, LanguageElement * loop_ ):
         repeats{ repeats_ },
         loop{ loop_ },
         LanguageElement()
     {}
 
-    void be_handled(Interpreter *interpreter) override {
-        std::cout<<"repeat loop"<<std::endl;
-    }
+    void be_handled(Interpreter *interpreter) override;
+
+    Assignable *getRepeats() const;
+
+    LanguageElement *getLoop() const;
 };
 
 

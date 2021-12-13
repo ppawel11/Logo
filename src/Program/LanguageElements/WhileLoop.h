@@ -8,16 +8,18 @@
 #include <vector>
 
 class WhileLoop: public LanguageElement {
-    OrCondition condition;
-    Block loop;
+    Assignable * condition;
+    LanguageElement* loop;
 
 public:
-    WhileLoop(OrCondition condition_, Block loop_ ):
-        condition{std::move( condition_ )}, loop{std::move(loop_)}, LanguageElement() {}
+    WhileLoop(Assignable * condition_, LanguageElement* loop_ ):
+        condition{ condition_ }, loop{ loop_ }, LanguageElement() {}
 
-    void be_handled(Interpreter *interpreter) override {
+    void be_handled(Interpreter *interpreter) override;
 
-    }
+    Assignable *getCondition() const;
+
+    LanguageElement *getLoop() const;
 };
 
 

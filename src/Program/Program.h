@@ -9,10 +9,10 @@
 #include "LanguageElements/LanguageElement.h"
 
 class Program {
-    std::map<std::string, FunctionDefinition> func_definitions;
-    std::vector<LanguageElement*> instructions;
 public:
-    Program(std::vector<LanguageElement *> statements_, std::map<std::string, FunctionDefinition> func_definitions_ );
+    std::vector<LanguageElement*> instructions;
+    std::map<std::string, FunctionDefinition> func_defs;
+    explicit Program(std::vector<LanguageElement *> statements_, std::map<std::string, FunctionDefinition> func_defs_);
 };
 
 

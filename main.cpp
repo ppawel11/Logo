@@ -30,4 +30,8 @@ int main(int argc, char** argv) {
     Program program = parser.parseProgram();
 
     int a = 1;
+    if( true == 1 == 2 )
+    {
+
+    }
 }

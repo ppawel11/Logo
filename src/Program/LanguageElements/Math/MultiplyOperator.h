@@ -1,4 +1,6 @@
 #ifndef TKOM_MULTIPLYOPERATOR_H
+
+
 #define TKOM_MULTIPLYOPERATOR_H
 
 #include "OperationType.h"
@@ -14,6 +16,8 @@ public:
         }
         type = type_;
     }
+
+    OperationType getType() const;
 };
 
 

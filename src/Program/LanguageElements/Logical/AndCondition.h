@@ -5,13 +5,18 @@
 #include <vector>
 #include "EqualityCondition.h"
 
-class AndCondition {
-    std::vector<EqualityCondition> eq_conditions;
+class AndCondition: public Assignable {
+    // equality_condition, { and_operator, equality_condition }
+    std::vector<Assignable*> eq_conditions;
 public:
-    AndCondition(std::vector<EqualityCondition> eq_conditions_) :
+    AndCondition(std::vector<Assignable*> eq_conditions_) :
         eq_conditions{std::move(eq_conditions_ )}
     {}
-};
 
+    const std::vector<Assignable *> &getEqConditions() const;
+
+    void be_evaluated(Interpreter *interpreter) override;
+
+};
 
 #endif //TKOM_ANDCONDITION_H

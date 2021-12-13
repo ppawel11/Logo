@@ -9,18 +9,20 @@
 
 class VariableAssignment: public LanguageElement {
     std::string label;
-    Assignable value;
+    Assignable * value;
 
 public:
-    VariableAssignment(const std::string &label_, const Assignable &value_) :
+    VariableAssignment(const std::string &label_, Assignable * value_) :
         label {label_ },
         value {value_ },
         LanguageElement()
     {}
 
-    void be_handled(Interpreter *interpreter) override {
-        std::cout<<"variable assignent"<<std::endl;
-    }
+    void be_handled(Interpreter *interpreter) override;
+
+    const std::string &getLabel() const;
+
+    Assignable *getValue() const;
 };
 
 

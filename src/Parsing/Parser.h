@@ -19,8 +19,13 @@
 #include "../Program/LanguageElements/WhileLoop.h"
 #include "../Program/LanguageElements/ForEachLoop.h"
 #include "../Program/LanguageElements/Math/AdditiveExpression.h"
+#include "../Program/LanguageElements/Math/NegatedMathElement.h"
+#include "../Program/LanguageElements/Logical/NegatedLogicalElement.h"
 #include "../Program/LanguageElements/RepeatLoop.h"
 #include "../Program/LanguageElements/Math/MathElement.h"
+#include "../Program/LanguageElements/Variables/Number.h"
+#include "../Program/LanguageElements/Variables/Bool.h"
+#include "../Program/LanguageElements/Variables/Label.h"
 #include "../Program/LanguageElements/If.h"
 #include "../Program/LanguageElements/VariableDeclaration.h"
 #include "../Program/LanguageElements/Return.h"
@@ -41,7 +46,7 @@ public:
 private:
     std::optional<FunctionDefinition> tryToParseFuncDef();
 
-    std::optional<LanguageElement *> tryToParseLaguageElement();
+    std::optional<LanguageElement *> tryToParseLanguageElement();
 
     std::optional<LanguageElement *> tryToParseSemicolonEnded();
 
@@ -65,35 +70,35 @@ private:
 
     std::optional<LanguageElement *> tryToParseReturn();
 
-    std::optional<Assignable> tryToParseAssignable();
-
-    std::optional<OrCondition> tryToParseOrCondition();
-
-    std::optional<AdditiveExpression> tryToParseAdditiveExpression();
-
-    std::optional<MultiplyExpression> tryToParseMultiplyExpression();
-
-    std::optional<List> tryToParseList();
-
-    std::optional<Block> tryToParseBlock();
-
-    std::optional<MathElement> tryToParseMathElement();
+    std::optional<LanguageElement *> tryToParseBlock();
 
     std::optional<Arguments> tryToParseArguments();
 
-    std::optional<AdditiveExpression> tryToParseParentExpression();
+    std::optional<Assignable *> tryToParseAssignable();
 
-    std::optional<Assignable> tryToParseString();
+    std::optional<Assignable *> tryToParseOrCondition();
 
-    std::optional<AndCondition> tryToParseAndCondition();
+    std::optional<Assignable *> tryToParseAdditiveExpression();
 
-    std::optional<EqualityCondition> tryToParseEqualityCondition();
+    std::optional<Assignable *> tryToParseMultiplyExpression();
 
-    std::optional<RelationalCondition> tryToParseRelationalCondition();
+    std::optional<Assignable *> tryToParseList();
 
-    std::optional<OrCondition> tryToParseParentCondition();
+    std::optional<Assignable *> tryToParseMathElement();
 
-    std::optional<Comparison> tryToParseComparison();
+    std::optional<Assignable *> tryToParseParentExpression();
+
+    std::optional<Assignable *> tryToParseString();
+
+    std::optional<Assignable *> tryToParseAndCondition();
+
+    std::optional<Assignable *> tryToParseEqualityCondition();
+
+    std::optional<Assignable *> tryToParseRelationalCondition();
+
+    std::optional<Assignable *> tryToParseParentCondition();
+
+    std::optional<Assignable *> tryToParseComparison();
 };
 
 

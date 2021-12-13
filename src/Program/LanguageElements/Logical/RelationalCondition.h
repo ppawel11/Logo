@@ -7,21 +7,22 @@
 
 class OrCondition;
 
-class RelationalCondition {
+class RelationalCondition: public Assignable {
+    // [“!”] ( comparison | “true” | “false” | parentheses_condition )
     bool is_negated;
-
-    std::optional<Comparison> comparison;
 
     std::optional<bool> literal_value;
 
-    OrCondition* parent_condition;
+    std::optional<Assignable*> comparison;
+
+    std::optional<Assignable*> parent_condition;
 
 public:
-    RelationalCondition( bool is_negated_, Comparison comparison_ );
+    RelationalCondition( bool is_negated_, Assignable *comparison_, bool is_parented = false );
 
     RelationalCondition( bool is_negated_, bool literal_value_ );
 
-    RelationalCondition(bool is_negated_, OrCondition *parent_ );
+    void be_evaluated(Interpreter *interpreter) override;
 };
 
 

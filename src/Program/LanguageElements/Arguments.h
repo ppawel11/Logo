@@ -7,16 +7,20 @@
 #include <vector>
 
 class Arguments {
-    std::vector<Assignable> args;
+    std::vector<Assignable*> args;
 
 public:
     Arguments():
         args {}
     {}
 
-    explicit Arguments(std::vector <Assignable> args_):
-        args{std::move(args_)}
+    explicit Arguments(std::vector <Assignable*> args_):
+        args{std::move( args_ )}
     {}
+
+    const std::vector<Assignable *> &getArgs() const {
+        return args;
+    }
 
 };
 

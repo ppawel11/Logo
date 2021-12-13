@@ -8,18 +8,20 @@
 
 class VariableDeclaration: public LanguageElement {
     std::string label;
-    Assignable value;
+    Assignable * value;
 public:
-    VariableDeclaration(std::string label_, Assignable value_):
+    VariableDeclaration(std::string label_, Assignable * value_):
         label {std::move( label_ )},
         value { value_ },
         LanguageElement()
     {
     }
 
-    void be_handled(Interpreter *interpreter) override {
+    void be_handled(Interpreter *interpreter) override;
 
-    }
+    const std::string &getLabel() const;
+
+    Assignable *getValue() const;
 };
 
 

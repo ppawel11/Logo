@@ -5,7 +5,7 @@ class Interpreter;
 
 class LanguageElement {
 public:
-    virtual void be_handled(Interpreter *interpreter) = 0;
+    virtual void be_handled(Interpreter *interpreter) {};
 };
 
 
