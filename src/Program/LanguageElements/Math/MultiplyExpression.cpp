@@ -5,7 +5,7 @@ void MultiplyExpression::be_evaluated(Interpreter *interpreter) {
     interpreter->evaluate(this);
 }
 
-const std::vector<Assignable *> &MultiplyExpression::getElements() const {
+const std::vector<std::unique_ptr<Assignable>> & MultiplyExpression::getElements() const {
     return elements;
 }
 

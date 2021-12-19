@@ -5,7 +5,7 @@ void AdditiveExpression::be_evaluated(Interpreter *interpreter) {
     interpreter->evaluate(this);
 }
 
-const std::vector<Assignable *> &AdditiveExpression::getExpressions() const {
+const std::vector<std::unique_ptr<Assignable>> & AdditiveExpression::getExpressions() const {
     return expressions;
 }
 

@@ -5,11 +5,11 @@ void EqualityCondition::be_evaluated(Interpreter *interpreter) {
     interpreter->evaluate(this);
 }
 
-Assignable *EqualityCondition::getFirstCondition() const {
+const std::unique_ptr<Assignable> & EqualityCondition::getFirstCondition() const {
     return first_condition;
 }
 
-const std::optional<Assignable *> &EqualityCondition::getSecondCondition() const {
+const std::optional<std::unique_ptr<Assignable>> & EqualityCondition::getSecondCondition() const {
     return second_condition;
 }
 

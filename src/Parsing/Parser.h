@@ -30,8 +30,11 @@
 #include "../Program/LanguageElements/ListOfAssignable.h"
 #include "../Program/LanguageElements/Variables/String.h"
 #include "../Program/LanguageElements/Block.h"
+#include "../Program/LanguageElements/Logical/Comparison.h"
 #include "../Program/LanguageElements/Label.h"
 #include "../Program/LanguageElements/FunctionDefinition.h"
+#include "../Program/LanguageElements/Logical/RelationType.h"
+
 
 
 class Parser {
@@ -43,61 +46,61 @@ public:
     Program parseProgram();
 
 private:
-    std::optional<FunctionDefinition*> tryToParseFuncDef();
+    std::optional<std::unique_ptr<FunctionDefinition>> tryToParseFuncDef();
 
-    std::optional<LanguageElement *> tryToParseLanguageElement();
+    std::optional<std::unique_ptr<LanguageElement>> tryToParseLanguageElement();
 
-    std::optional<LanguageElement *> tryToParseSemicolonEnded();
+    std::optional<std::unique_ptr<LanguageElement>> tryToParseSemicolonEnded();
 
-    std::optional<LanguageElement *> tryToParseIf();
+    std::optional<std::unique_ptr<LanguageElement>> tryToParseIf();
 
-    std::optional<LanguageElement *> tryToParseLoop();
+    std::optional<std::unique_ptr<LanguageElement>> tryToParseLoop();
 
-    std::optional<LanguageElement *> tryToParseVarDeclaration();
+    std::optional<std::unique_ptr<LanguageElement>> tryToParseVarDeclaration();
 
-    std::optional<LanguageElement *> tryToParseVarAssignmentOrFuncCall();
+    std::optional<std::unique_ptr<LanguageElement>> tryToParseVarAssignmentOrFuncCall();
 
-    std::optional<LanguageElement *> tryToParseVarAssignment(const std::string& label);
+    std::optional<std::unique_ptr<LanguageElement>> tryToParseVarAssignment(const std::string& label);
 
-    std::optional<LanguageElement *> tryToParseFuncCall(const std::string& label);
+    template<typename T> std::optional<std::unique_ptr<T>> tryToParseFuncCall(const std::string& label);
 
-    std::optional<LanguageElement *> tryToParseWhileLoop();
+    std::optional<std::unique_ptr<LanguageElement>> tryToParseWhileLoop();
 
-    std::optional<LanguageElement *> tryToParseForEachLoop();
+    std::optional<std::unique_ptr<LanguageElement>> tryToParseForEachLoop();
 
-    std::optional<LanguageElement *> tryToParseRepeatLoop();
+    std::optional<std::unique_ptr<LanguageElement>> tryToParseRepeatLoop();
 
-    std::optional<LanguageElement *> tryToParseReturn();
+    std::optional<std::unique_ptr<LanguageElement>> tryToParseReturn();
 
-    std::optional<LanguageElement *> tryToParseBlock();
+    std::optional<std::unique_ptr<LanguageElement>> tryToParseBlock();
 
     std::optional<Arguments> tryToParseArguments();
 
-    std::optional<Assignable *> tryToParseAssignable();
+    std::optional<std::unique_ptr<Assignable>> tryToParseAssignable();
 
-    std::optional<Assignable *> tryToParseOrCondition();
+    std::optional<std::unique_ptr<Assignable>> tryToParseOrCondition();
 
-    std::optional<Assignable *> tryToParseAdditiveExpression();
+    std::optional<std::unique_ptr<Assignable>> tryToParseAdditiveExpression();
 
-    std::optional<Assignable *> tryToParseMultiplyExpression();
+    std::optional<std::unique_ptr<Assignable>> tryToParseMultiplyExpression();
 
-    std::optional<Assignable *> tryToParseList();
+    std::optional<std::unique_ptr<Assignable>> tryToParseList();
 
-    std::optional<Assignable *> tryToParseMathElement();
+    std::optional<std::unique_ptr<Assignable>> tryToParseMathElement();
 
-    std::optional<Assignable *> tryToParseParentExpression();
+    std::optional<std::unique_ptr<Assignable>> tryToParseParentExpression();
 
-    std::optional<Assignable *> tryToParseString();
+    std::optional<std::unique_ptr<Assignable>> tryToParseString();
 
-    std::optional<Assignable *> tryToParseAndCondition();
+    std::optional<std::unique_ptr<Assignable>> tryToParseAndCondition();
 
-    std::optional<Assignable *> tryToParseEqualityCondition();
+    std::optional<std::unique_ptr<Assignable>> tryToParseEqualityCondition();
 
-    std::optional<Assignable *> tryToParseRelationalCondition();
+    std::optional<std::unique_ptr<Assignable>> tryToParseRelationalCondition();
 
-    std::optional<Assignable *> tryToParseParentCondition();
+    std::optional<std::unique_ptr<Assignable>> tryToParseParentCondition();
 
-    std::optional<Assignable *> tryToParseComparison();
+    std::optional<std::unique_ptr<Assignable>> tryToParseComparison();
 };
 
 

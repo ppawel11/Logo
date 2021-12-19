@@ -1,29 +1,30 @@
 #ifndef TKOM_EQUALITYCONDITION_H
 #define TKOM_EQUALITYCONDITION_H
 
+#include "../Variables/Assignable.h"
 #include <utility>
-#include "RelationalCondition.h"
 #include <optional>
+#include <memory>
 
 class EqualityCondition: public Assignable {
     // relational_condition, [ equality_operator, relational_condition ]
-    Assignable * first_condition;
-    std::optional<Assignable*> second_condition;
+    std::unique_ptr<Assignable> first_condition;
+    std::optional<std::unique_ptr<Assignable>> second_condition;
     std::optional<bool> equals;
 public:
-    explicit EqualityCondition( Assignable * first_condition_ ) :
-        first_condition{ first_condition_ }
+    explicit EqualityCondition( std::unique_ptr<Assignable> first_condition_ ) :
+        first_condition{ std::move(first_condition_) }
     {}
 
-    EqualityCondition( Assignable* first_condition_, bool equals_, Assignable* second_condition_ ) :
-        first_condition{ first_condition_ },
+    EqualityCondition( std::unique_ptr<Assignable> first_condition_, bool equals_, std::unique_ptr<Assignable> second_condition_ ) :
+        first_condition{ std::move(first_condition_) },
         equals{ equals_ },
-        second_condition{ second_condition_ }
+        second_condition{ std::move(second_condition_) }
     {}
 
-    Assignable *getFirstCondition() const;
+    const std::unique_ptr<Assignable> & getFirstCondition() const;
 
-    const std::optional<Assignable *> &getSecondCondition() const;
+    const std::optional<std::unique_ptr<Assignable>> & getSecondCondition() const;
 
     const std::optional<bool> &getEquals() const;
 

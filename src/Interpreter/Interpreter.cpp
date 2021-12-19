@@ -1,9 +1,9 @@
 #include "Interpreter.h"
 
 void Interpreter::interpret(const Program& program) {
-    scope_stack.init_global(std::map<std::string, FunctionDefinition*>());
+    scope_stack.init_global(std::map<std::string, std::unique_ptr<FunctionDefinition>>());
 
-    for( auto elem : program.instructions )
+    for( auto const & elem : program.instructions )
     {
         elem->be_handled( this );
     }
@@ -14,12 +14,14 @@ void Interpreter::interpret(ForEachLoop *for_each_loop) {
 }
 
 void Interpreter::interpret(FunctionCall *function_call) {
-    auto func_def = scope_stack.get_function(function_call->getName());
+    const auto & func_def = scope_stack.get_function(function_call->getName());
     auto func_params = func_def->getParameters();
 
-    auto func_args = function_call->getArguments().getArgs();
-    // todo: porownac liczbe param i args
-    // std::zip
+    const auto & func_args = function_call->getArguments().getArgs();
+
+    if (func_params.size() != func_args.size() )
+        throw std::runtime_error("invalid number of arguments");
+
     std::map<std::string, VariantValue*> call_init;
 
     for (int i = 0; i < func_params.size(); ++i)
@@ -28,7 +30,6 @@ void Interpreter::interpret(FunctionCall *function_call) {
         call_init[func_params[i]] = scope_stack.get_last_result();
     }
 
-    //todo: DONE stworzenie callcontext wewnatrz make_Call
     scope_stack.make_call(call_init);
 
     func_def->getBody()->be_handled(this);
@@ -37,7 +38,7 @@ void Interpreter::interpret(FunctionCall *function_call) {
 }
 
 void Interpreter::interpret(FunctionDefinition *function_definition) {
-    scope_stack.make_func( function_definition->getName(), FunctionDefinition(*function_definition));
+    scope_stack.make_func( function_definition->getName(), std::make_unique<FunctionDefinition>( std::move(*function_definition )) );
 }
 
 void Interpreter::interpret(If *if_statement) {
@@ -125,31 +126,29 @@ void Interpreter::interpret(Block *block) {
 
 
 void Interpreter::evaluate(OrCondition *or_condition) {
-    auto expressions = or_condition->getElements();
+    const auto & expressions = or_condition->getElements();
 
     expressions[0]->be_evaluated(this);
 
     auto left_val = scope_stack.get_last_result();
 
-    //todo: chyba trzeba pominąc pierwszy, bo już był ewaluowany
-    for( auto e : expressions )
+    for( int i = 1; i < expressions.size(); ++i )
     {
-        e->be_evaluated(this);
+        expressions[i]->be_evaluated(this);
         scope_stack.set_last_result( *left_val || scope_stack.get_last_result() );
     }
 }
 
 void Interpreter::evaluate(AndCondition *and_condition) {
-    auto expressions = and_condition->getEqConditions();
+    const auto & expressions = and_condition->getEqConditions();
 
     expressions[0]->be_evaluated(this);
 
     auto left_val = scope_stack.get_last_result();
 
-    //todo: to samo co wyżej
-    for( auto e : expressions )
+    for( int i = 1; i < expressions.size(); ++i )
     {
-        e->be_evaluated(this);
+        expressions[i]->be_evaluated(this);
         scope_stack.set_last_result( *left_val && scope_stack.get_last_result() );
     }
 }
@@ -212,9 +211,7 @@ void Interpreter::evaluate(AdditiveExpression *additive_expression) {
         auto left_val = scope_stack.get_last_result();
 
         auto op = additive_expression->getOperators()[i];
-        auto exp = additive_expression->getExpressions()[i+1];
-
-        exp->be_evaluated(this);
+        additive_expression->getExpressions()[i+1]->be_evaluated(this);
 
         switch( op.getType() )
         {
@@ -239,9 +236,7 @@ void Interpreter::evaluate(MultiplyExpression *multiply_expression) {
         auto left_val = scope_stack.get_last_result();
 
         auto op = multiply_expression->getOperators()[i];
-        auto exp = multiply_expression->getElements()[i+1];
-
-        exp->be_evaluated(this);
+        multiply_expression->getElements()[i+1]->be_evaluated( this );
 
         switch( op.getType() )
         {
@@ -295,15 +290,11 @@ void Interpreter::evaluate(NegatedLogicalElement *negated_logical_element) {
 void Interpreter::evaluate(ListOfAssignable *list_val) {
     std::vector<VariantValue*> values;
 
-    for( auto expression : list_val->get_elements() )
+    for( const auto & expression : list_val->get_elements() )
     {
         expression->be_evaluated( this );
         values.emplace_back( scope_stack.get_last_result() );
     }
 
     scope_stack.set_last_result( new ListOfVariantValues(values) );
-}
-
-void Interpreter::evaluate(RelationalCondition *multiply_expression) {
-
 }

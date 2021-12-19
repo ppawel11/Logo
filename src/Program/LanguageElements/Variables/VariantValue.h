@@ -83,8 +83,6 @@ public:
     virtual bool operator>=(Number * other_value ) = 0;
     virtual bool operator>=(ListOfVariantValues * other_value ) = 0;
 
-    // todo: operatory porównania
-
     virtual bool to_bool() = 0;
     virtual std::string to_string() = 0;
     virtual int to_number() = 0;

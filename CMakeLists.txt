@@ -66,8 +66,6 @@ set(SOURCE
         src/Program/LanguageElements/Logical/OrCondition.h
         src/Program/LanguageElements/Logical/EqualityCondition.h
         src/Program/LanguageElements/Logical/EqualityCondition.cpp
-        src/Program/LanguageElements/Logical/RelationalCondition.h
-        src/Program/LanguageElements/Logical/RelationalCondition.cpp
         src/Program/LanguageElements/Logical/RelationType.h
         src/Program/Program.cpp
         src/Program/Program.h
@@ -99,6 +97,8 @@ set(SOURCE
         src/Program/LanguageElements/Label.h
         src/Program/LanguageElements/ListOfAssignable.cpp
         src/Program/LanguageElements/ListOfAssignable.h
+        src/Program/LanguageElements/Logical/NegatedLogicalElement.cpp
+        src/Program/LanguageElements/Logical/NegatedLogicalElement.h
         )
 
 
@@ -108,7 +108,7 @@ set(TEST_SOURCE
         test/Source/string_source_test.cpp
         test/Token/token_test.cpp
         test/Parser/parser_test.cpp
-        src/Program/LanguageElements/Logical/NegatedLogicalElement.cpp src/Program/LanguageElements/Logical/NegatedLogicalElement.h)
+        )
 
 if(GUI)
     qt5_add_resources(QML_RESOURCES qrc/tkom.qrc)

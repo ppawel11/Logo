@@ -5,10 +5,10 @@ void WhileLoop::be_handled(Interpreter *interpreter) {
     interpreter->interpret(this);
 }
 
-Assignable *WhileLoop::getCondition() const {
+const std::unique_ptr<Assignable> & WhileLoop::getCondition() const {
     return condition;
 }
 
-LanguageElement *WhileLoop::getLoop() const {
+const std::unique_ptr<LanguageElement> & WhileLoop::getLoop() const {
     return loop;
 }

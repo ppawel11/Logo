@@ -5,11 +5,11 @@ void Comparison::be_evaluated(Interpreter *interpreter) {
     interpreter->evaluate(this);
 }
 
-Assignable *Comparison::getFirstExpression() const {
+const std::unique_ptr<Assignable> & Comparison::getFirstExpression() const {
     return first_expression;
 }
 
-const std::optional<Assignable *> &Comparison::getSecondExpression() const {
+const std::optional<std::unique_ptr<Assignable>> & Comparison::getSecondExpression() const {
     return second_expression;
 }
 

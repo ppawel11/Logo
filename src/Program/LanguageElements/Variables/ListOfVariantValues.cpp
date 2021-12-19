@@ -187,7 +187,14 @@ bool ListOfVariantValues::operator==(Number* other_value) {
 }
 
 bool ListOfVariantValues::operator==(ListOfVariantValues* other_value) {
-    
+    if( elements.size() != other_value->to_list().size())
+        return false;
+    for( int i = 0; i < elements.size(); ++i )
+    {
+        if( *elements[i] != other_value->to_list()[i] )
+            return false;
+    }
+    return true;
 }
 
 bool ListOfVariantValues::operator!=(VariantValue* other_value) {
@@ -207,11 +214,11 @@ bool ListOfVariantValues::operator!=(Number* other_value) {
 }
 
 bool ListOfVariantValues::operator!=(ListOfVariantValues* other_value) {
-    throw std::runtime_error("invalid operation comparison on listofvariantvalues and listofvariantvalues");
+    return !( *this == other_value );
 }
 
 bool ListOfVariantValues::operator<(VariantValue* other_value) {
-    return *other_value < this;
+    throw std::runtime_error("invalid operation comparison on listofvariantvalues and other value");
 }
 
 bool ListOfVariantValues::operator<(String* other_value) {
@@ -231,7 +238,7 @@ bool ListOfVariantValues::operator<(ListOfVariantValues* other_value) {
 }
 
 bool ListOfVariantValues::operator<=(VariantValue* other_value) {
-    return *other_value <= this;
+    throw std::runtime_error("invalid operation comparison on listofvariantvalues and other value");
 }
 
 bool ListOfVariantValues::operator<=(String* other_value) {
@@ -251,7 +258,7 @@ bool ListOfVariantValues::operator<=(ListOfVariantValues* other_value) {
 }
 
 bool ListOfVariantValues::operator>(VariantValue* other_value) {
-    return *other_value > this;
+    throw std::runtime_error("invalid operation comparison on listofvariantvalues and other value");
 }
 
 bool ListOfVariantValues::operator>(String* other_value) {
@@ -271,7 +278,7 @@ bool ListOfVariantValues::operator>(ListOfVariantValues* other_value) {
 }
 
 bool ListOfVariantValues::operator>=(VariantValue* other_value) {
-    return *other_value >= this;
+    throw std::runtime_error("invalid operation comparison on listofvariantvalues and other value");
 }
 
 bool ListOfVariantValues::operator>=(String* other_value) {

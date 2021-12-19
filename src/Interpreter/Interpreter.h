@@ -17,6 +17,7 @@
 #include "../Program/LanguageElements/ListOfAssignable.h"
 #include "../Program/LanguageElements/Math/NegatedMathElement.h"
 #include "../Program/LanguageElements/Logical/NegatedLogicalElement.h"
+#include "../Program/LanguageElements/Logical/Comparison.h"
 
 class Interpreter {
     ScopeStack scope_stack;
@@ -42,7 +43,6 @@ public:
     void evaluate(EqualityCondition * equality_condition);
     void evaluate(AdditiveExpression * additive_expression);
     void evaluate(MultiplyExpression * multiply_expression);
-    void evaluate(RelationalCondition * multiply_expression);
     void evaluate(FunctionCall * function_call);
     void evaluate(Bool * bool_val);
     void evaluate(String * string_val);

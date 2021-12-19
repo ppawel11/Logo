@@ -6,15 +6,16 @@
 #include "Variables/Assignable.h"
 #include "../Program.h"
 #include <iostream>
+#include <utility>
 
 class VariableAssignment: public LanguageElement {
     std::string label;
-    Assignable * value;
+    std::unique_ptr<Assignable> value;
 
 public:
-    VariableAssignment(const std::string &label_, Assignable * value_) :
-        label {label_ },
-        value {value_ },
+    VariableAssignment(std::string label_, std::unique_ptr<Assignable> value_) :
+        label {std::move(label_ )},
+        value { std::move(value_) },
         LanguageElement()
     {}
 
@@ -22,7 +23,7 @@ public:
 
     const std::string &getLabel() const;
 
-    Assignable *getValue() const;
+    const std::unique_ptr<Assignable> & getValue() const;
 };
 
 

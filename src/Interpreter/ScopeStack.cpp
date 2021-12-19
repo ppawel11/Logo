@@ -40,7 +40,7 @@ void ScopeStack::set_var(const std::string& name, VariantValue *value) {
     }
 }
 
-void ScopeStack::init_global(std::map<std::string, FunctionDefinition *> func_defs_) {
+void ScopeStack::init_global(std::map<std::string, std::unique_ptr<FunctionDefinition>> func_defs_) {
     call_stack.push(CallContext());
 
     func_map = std::move(func_defs_);
@@ -49,13 +49,13 @@ void ScopeStack::init_global(std::map<std::string, FunctionDefinition *> func_de
     last_result = nullptr;
 }
 
-void ScopeStack::make_func(const std::string &name, FunctionDefinition func_def) {
-     func_map[name] = &func_def;
+void ScopeStack::make_func(const std::string &name, std::unique_ptr<FunctionDefinition> func_def) {
+     func_map[name] = std::move(func_def);
 }
 
-FunctionDefinition * ScopeStack::get_function(const std::string &name) {
+const std::unique_ptr<FunctionDefinition> & ScopeStack::get_function(const std::string &name) {
     if( func_map.find(name) != func_map.end() )
-        return dynamic_cast<FunctionDefinition*>(func_map.at(name));
+        return func_map.at(name);
     throw std::runtime_error("func not found");
 }
 

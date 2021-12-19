@@ -8,24 +8,24 @@
 #include "../Program.h"
 
 class If: public LanguageElement {
-    LanguageElement * if_block;
-    std::optional<LanguageElement *> else_block;
-    Assignable* condition;
+    std::unique_ptr<LanguageElement> if_block;
+    std::optional<std::unique_ptr<LanguageElement>> else_block;
+    std::unique_ptr<Assignable> condition;
 
 public:
-    If(Assignable* condition_, LanguageElement* if_block_, std::optional<LanguageElement*> else_block_):
-        condition{ condition_ },
-        if_block{ if_block_ },
-        else_block{ else_block_ }
+    If(std::unique_ptr<Assignable> condition_, std::unique_ptr<LanguageElement> if_block_, std::optional<std::unique_ptr<LanguageElement>> else_block_):
+        condition{ std::move(condition_) },
+        if_block{ std::move(if_block_) },
+        else_block{ std::move(else_block_) }
     {}
 
     void be_handled(Interpreter *interpreter) override;
 
-    LanguageElement *getIfBlock() const;
+    const std::unique_ptr<LanguageElement> & getIfBlock() const;
 
-    const std::optional<LanguageElement *> &getElseBlock() const;
+    const std::optional<std::unique_ptr<LanguageElement>> & getElseBlock() const;
 
-    Assignable *getCondition() const;
+    const std::unique_ptr<Assignable> & getCondition() const;
 };
 
 

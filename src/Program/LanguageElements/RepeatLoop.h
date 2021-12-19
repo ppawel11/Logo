@@ -9,21 +9,21 @@
 #include <iostream>
 
 class RepeatLoop: public LanguageElement {
-    Assignable * repeats;
-    LanguageElement* loop;
+    std::unique_ptr<Assignable> repeats;
+    std::unique_ptr<LanguageElement> loop;
 
 public:
-    RepeatLoop(Assignable * repeats_, LanguageElement * loop_ ):
-        repeats{ repeats_ },
-        loop{ loop_ },
+    RepeatLoop(std::unique_ptr<Assignable> repeats_, std::unique_ptr<LanguageElement> loop_ ):
+        repeats{ std::move(repeats_) },
+        loop{ std::move(loop_) },
         LanguageElement()
     {}
 
     void be_handled(Interpreter *interpreter) override;
 
-    Assignable *getRepeats() const;
+    const std::unique_ptr<Assignable> & getRepeats() const;
 
-    LanguageElement *getLoop() const;
+    const std::unique_ptr<LanguageElement> & getLoop() const;
 };
 
 

@@ -8,18 +8,18 @@
 #include <vector>
 
 class WhileLoop: public LanguageElement {
-    Assignable * condition;
-    LanguageElement* loop;
+    std::unique_ptr<Assignable> condition;
+    std::unique_ptr<LanguageElement> loop;
 
 public:
-    WhileLoop(Assignable * condition_, LanguageElement* loop_ ):
-        condition{ condition_ }, loop{ loop_ }, LanguageElement() {}
+    WhileLoop(std::unique_ptr<Assignable> condition_, std::unique_ptr<LanguageElement> loop_ ):
+        condition{ std::move(condition_) }, loop{ std::move(loop_) }, LanguageElement() {}
 
     void be_handled(Interpreter *interpreter) override;
 
-    Assignable *getCondition() const;
+    const std::unique_ptr<Assignable> & getCondition() const;
 
-    LanguageElement *getLoop() const;
+    const std::unique_ptr<LanguageElement> & getLoop() const;
 };
 
 

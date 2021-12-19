@@ -5,6 +5,6 @@ void ListOfAssignable::be_evaluated(Interpreter *interpreter) {
     interpreter->evaluate( this );
 }
 
-std::vector<Assignable *> ListOfAssignable::get_elements() {
+const std::vector<std::unique_ptr<Assignable>> & ListOfAssignable::get_elements() {
     return elements;
 }

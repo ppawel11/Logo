@@ -8,32 +8,32 @@
 
 class Comparison: public Assignable {
     // additive_expression, [ comparison_operator, additive_expression ]
-    Assignable* first_expression;
-    std::optional<Assignable*> second_expression;
+    std::unique_ptr<Assignable> first_expression;
+    std::optional<std::unique_ptr<Assignable>> second_expression;
     std::optional<RelationType> type;
 
 public:
-    explicit Comparison( Assignable* first_expression_ ) :
-            first_expression{ first_expression_ },
+    explicit Comparison( std::unique_ptr<Assignable> first_expression_ ) :
+            first_expression{ std::move(first_expression_) },
             type{ std::nullopt },
             second_expression{ std::nullopt }
     {}
 
     Comparison(
-            Assignable* first_expression_,
+            std::unique_ptr<Assignable> first_expression_,
             RelationType type_,
-            Assignable* second_expression_
+            std::unique_ptr<Assignable> second_expression_
     ) :
-        first_expression{ first_expression_ },
+        first_expression{ std::move(first_expression_) },
         type{ type_ },
-        second_expression{ second_expression_ }
+        second_expression{ std::move(second_expression_) }
     {}
 
     void be_evaluated(Interpreter *interpreter) override;
 
-    Assignable *getFirstExpression() const;
+    const std::unique_ptr<Assignable> & getFirstExpression() const;
 
-    const std::optional<Assignable *> &getSecondExpression() const;
+    const std::optional<std::unique_ptr<Assignable>> & getSecondExpression() const;
 
     const std::optional<RelationType> &getType() const;
 };

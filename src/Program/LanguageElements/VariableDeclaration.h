@@ -5,14 +5,15 @@
 #include "Variables/Assignable.h"
 #include <string>
 #include <utility>
+#include <memory>
 
 class VariableDeclaration: public LanguageElement {
     std::string label;
-    Assignable * value;
+    std::unique_ptr<Assignable> value;
 public:
-    VariableDeclaration(std::string label_, Assignable * value_):
+    VariableDeclaration(std::string label_, std::unique_ptr<Assignable> value_):
         label {std::move( label_ )},
-        value { value_ },
+        value { std::move(value_) },
         LanguageElement()
     {
     }
@@ -21,7 +22,7 @@ public:
 
     const std::string &getLabel() const;
 
-    Assignable *getValue() const;
+    const std::unique_ptr<Assignable> & getValue() const;
 };
 
 

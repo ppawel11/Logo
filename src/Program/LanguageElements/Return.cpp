@@ -5,6 +5,6 @@ void Return::be_handled(Interpreter *interpreter) {
     interpreter->interpret(this);
 }
 
-Assignable *Return::getValue() const {
+const std::unique_ptr<Assignable> & Return::getValue() const {
     return value;
 }

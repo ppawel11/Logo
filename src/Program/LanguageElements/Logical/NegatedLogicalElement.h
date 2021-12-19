@@ -3,15 +3,16 @@
 
 
 #include "../Variables/Assignable.h"
+#include <memory>
 
 class NegatedLogicalElement: public Assignable {
-    Assignable * element;
+    std::unique_ptr<Assignable> element;
 public:
-    explicit NegatedLogicalElement(Assignable* element_): element{ element_} {}
+    explicit NegatedLogicalElement(std::unique_ptr<Assignable> element_): element{ std::move(element_) }, Assignable() {}
 
     void be_evaluated(Interpreter *interpreter) override;
 
-    Assignable *getElement() const;
+    const std::unique_ptr<Assignable> & getElement() const;
 };
 
 

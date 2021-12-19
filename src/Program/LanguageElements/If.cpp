@@ -5,14 +5,14 @@ void If::be_handled(Interpreter *interpreter) {
     interpreter->interpret(this);
 }
 
-LanguageElement *If::getIfBlock() const {
+const std::unique_ptr<LanguageElement> & If::getIfBlock() const {
     return if_block;
 }
 
-const std::optional<LanguageElement *> &If::getElseBlock() const {
+const std::optional<std::unique_ptr<LanguageElement>> & If::getElseBlock() const {
     return else_block;
 }
 
-Assignable *If::getCondition() const {
+const std::unique_ptr<Assignable> & If::getCondition() const {
     return condition;
 }

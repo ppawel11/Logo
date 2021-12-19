@@ -4,16 +4,17 @@
 #include "Variables/Assignable.h"
 #include <utility>
 #include <vector>
+#include <memory>
 
 class ListOfAssignable: public Assignable {
-    std::vector<Assignable*> elements;
+    std::vector<std::unique_ptr<Assignable>> elements;
 
 public:
-    ListOfAssignable(std::vector<Assignable*> elements_): elements{std::move( elements_ )}, Assignable() {}
+    explicit ListOfAssignable(std::vector<std::unique_ptr<Assignable>> elements_): elements{std::move( elements_ )}, Assignable() {}
 
     void be_evaluated(Interpreter *interpreter) override;
 
-    std::vector<Assignable*> get_elements();
+    const std::vector<std::unique_ptr<Assignable>> & get_elements();
 };
 
 

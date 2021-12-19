@@ -6,13 +6,13 @@
 #include "../Program.h"
 
 class Return: public LanguageElement {
-    Assignable * value;
+    std::unique_ptr<Assignable> value;
 public:
-    explicit Return( Assignable * value_ ): value{ value_ }, LanguageElement() {}
+    explicit Return( std::unique_ptr<Assignable> value_ ): value{ std::move(value_) }, LanguageElement() {}
 
     void be_handled(Interpreter *interpreter) override;
 
-    Assignable *getValue() const;
+    const std::unique_ptr<Assignable> & getValue() const;
 };
 
 

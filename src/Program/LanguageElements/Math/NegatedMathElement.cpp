@@ -5,6 +5,6 @@ void NegatedMathElement::be_evaluated(Interpreter *interpreter) {
     interpreter->evaluate(this);
 }
 
-Assignable *NegatedMathElement::getElement() const {
+const std::unique_ptr<Assignable> & NegatedMathElement::getElement() const {
     return element;
 }

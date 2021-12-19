@@ -11,10 +11,10 @@
 
 class Program {
 public:
-    std::vector<LanguageElement *> instructions;
-    std::map<std::string, FunctionDefinition *> func_defs;
+    std::vector<std::unique_ptr<LanguageElement>> instructions;
+    std::map<std::string, std::unique_ptr<FunctionDefinition>> func_defs;
 
-    explicit Program(std::vector<LanguageElement *> statements_, std::map<std::string, FunctionDefinition *> func_defs_)
+    explicit Program(std::vector<std::unique_ptr<LanguageElement>> statements_, std::map<std::string, std::unique_ptr<FunctionDefinition>> func_defs_)
             : instructions{std::move(statements_)}, func_defs{std::move(func_defs_)} {}
 };
 

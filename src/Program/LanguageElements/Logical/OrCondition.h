@@ -7,15 +7,15 @@
 
 class OrCondition: public Assignable {
     // and_condition, { or_operator, and_condition }
-    std::vector<Assignable*> elements;
+    std::vector<std::unique_ptr<Assignable>> elements;
 
 public:
-    explicit OrCondition( std::vector<Assignable*> elements_):
+    explicit OrCondition( std::vector<std::unique_ptr<Assignable>> elements_):
         elements{ std::move(elements_) },
         Assignable()
     {}
 
-    const std::vector<Assignable *> &getElements() const;
+    const std::vector<std::unique_ptr<Assignable>> & getElements() const;
 
     void be_evaluated(Interpreter *interpreter) override;
 };

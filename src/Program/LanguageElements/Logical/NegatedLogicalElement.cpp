@@ -5,6 +5,6 @@ void NegatedLogicalElement::be_evaluated(Interpreter *interpreter) {
     interpreter->evaluate(this);
 }
 
-Assignable *NegatedLogicalElement::getElement() const {
+const std::unique_ptr<Assignable> & NegatedLogicalElement::getElement() const {
     return element;
 }

@@ -9,6 +9,6 @@ const std::string &VariableDeclaration::getLabel() const {
     return label;
 }
 
-Assignable *VariableDeclaration::getValue() const {
+const std::unique_ptr<Assignable> & VariableDeclaration::getValue() const {
     return value;
 }
