@@ -3,6 +3,7 @@
 
 #include <utility>
 
+#include "ScopeStack.h"
 #include "../Program/Program.h"
 #include "../Program/LanguageElements/ForEachLoop.h"
 #include "../Program/LanguageElements/FunctionCall.h"
@@ -12,9 +13,9 @@
 #include "../Program/LanguageElements/VariableAssignment.h"
 #include "../Program/LanguageElements/VariableDeclaration.h"
 #include "../Program/LanguageElements/WhileLoop.h"
-#include "ScopeStack.h"
+#include "../Program/LanguageElements/Label.h"
+#include "../Program/LanguageElements/ListOfAssignable.h"
 #include "../Program/LanguageElements/Math/NegatedMathElement.h"
-#include "../Program/LanguageElements/Variables/Label.h"
 #include "../Program/LanguageElements/Logical/NegatedLogicalElement.h"
 
 class Interpreter {
@@ -41,11 +42,13 @@ public:
     void evaluate(EqualityCondition * equality_condition);
     void evaluate(AdditiveExpression * additive_expression);
     void evaluate(MultiplyExpression * multiply_expression);
+    void evaluate(RelationalCondition * multiply_expression);
     void evaluate(FunctionCall * function_call);
     void evaluate(Bool * bool_val);
     void evaluate(String * string_val);
     void evaluate(Number * num_val);
-    void evaluate(List * list_val);
+    void evaluate(ListOfVariantValues * list_val);
+    void evaluate(ListOfAssignable * list_val);
     void evaluate(Label * label_val);
     void evaluate(NegatedMathElement * negated_math_element);
     void evaluate(NegatedLogicalElement * negated_logical_element);

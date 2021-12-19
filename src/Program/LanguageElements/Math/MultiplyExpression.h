@@ -3,7 +3,6 @@
 
 
 #include "../Variables/Assignable.h"
-#include "MathElement.h"
 #include "MultiplyOperator.h"
 #include <utility>
 #include <vector>

@@ -2,6 +2,7 @@
 #define TKOM_COMPARISON_H
 
 
+#include <optional>
 #include "../Math/AdditiveExpression.h"
 #include "RelationType.h"
 

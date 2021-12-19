@@ -53,8 +53,6 @@ set(SOURCE
         src/Program/LanguageElements/Math/AdditiveExpression.cpp
         src/Program/LanguageElements/Math/AdditiveOperator.cpp
         src/Program/LanguageElements/Math/AdditiveOperator.h
-        src/Program/LanguageElements/Math/MathElement.h
-        src/Program/LanguageElements/Math/MathElement.cpp
         src/Program/LanguageElements/Math/MultiplyExpression.h
         src/Program/LanguageElements/Math/MultiplyExpression.cpp
         src/Program/LanguageElements/Math/MultiplyOperator.cpp
@@ -77,14 +75,30 @@ set(SOURCE
         src/Parsing/Parser.h
         src/Interpreter/Interpreter.cpp
         src/Interpreter/Interpreter.h
+        src/Interpreter/Scope.cpp
+        src/Interpreter/Scope.h
+        src/Interpreter/ScopeStack.cpp
+        src/Interpreter/ScopeStack.h
+        src/Interpreter/CallContext.cpp
+        src/Interpreter/CallContext.h
         src/Program/LanguageElements/Variables/Bool.cpp
         src/Program/LanguageElements/Variables/Bool.h
         src/Program/LanguageElements/Variables/Number.cpp
         src/Program/LanguageElements/Variables/Number.h
+        src/Program/LanguageElements/Variables/ListOfVariantValues.cpp
+        src/Program/LanguageElements/Variables/ListOfVariantValues.h
+        src/Program/LanguageElements/Variables/String.cpp
+        src/Program/LanguageElements/Variables/String.h
+        src/Program/LanguageElements/Variables/Assignable.cpp
+        src/Program/LanguageElements/Variables/Assignable.h
         src/Program/LanguageElements/Math/NegatedMathElement.cpp
         src/Program/LanguageElements/Math/NegatedMathElement.h
-        src/Program/LanguageElements/Variables/Label.cpp
-        src/Program/LanguageElements/Variables/Label.h
+        src/Program/LanguageElements/Variables/VariantValue.cpp
+        src/Program/LanguageElements/Variables/VariantValue.h
+        src/Program/LanguageElements/Label.cpp
+        src/Program/LanguageElements/Label.h
+        src/Program/LanguageElements/ListOfAssignable.cpp
+        src/Program/LanguageElements/ListOfAssignable.h
         )
 
 
@@ -108,7 +122,7 @@ add_executable(TKOM
         main.cpp
         ${SOURCE}
         ${QML_RESOURCES}
-        src/Interpreter/Scope.cpp src/Interpreter/Scope.h src/Interpreter/ScopeStack.cpp src/Interpreter/ScopeStack.h src/Interpreter/CallContext.cpp src/Interpreter/CallContext.h)
+        )
 
 add_executable(TKOM_testing
         ${SOURCE}

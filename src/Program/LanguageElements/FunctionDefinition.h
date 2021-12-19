@@ -8,7 +8,9 @@
 #include <utility>
 #include <vector>
 
-class FunctionDefinition: public LanguageElement, public Assignable {
+class Interpreter;
+
+class FunctionDefinition: public LanguageElement {
     std::string name;
     std::vector<std::string> parameters;
     LanguageElement* body;
@@ -18,13 +20,7 @@ public:
     FunctionDefinition(std::string name_, std::vector<std::string> parameters_, LanguageElement* body_):
             name{std::move( name_ )}, parameters{std::move( parameters_ )}, body{ body_ } {}
 
-
-    void be_handled(Interpreter *interpreter) override {
-
-    }
-    void be_evaluated(Interpreter *interpreter) override {
-
-    }
+    void be_handled(Interpreter *interpreter) override;
 
     const std::string &getName() const {
         return name;

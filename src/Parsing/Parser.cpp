@@ -3,10 +3,10 @@
 
 Program Parser::parseProgram() {
     std::vector<LanguageElement*> statements;
-    std::map<std::string, FunctionDefinition> func_definitions;
+    std::map<std::string, FunctionDefinition*> func_definitions;
 
     std::optional<LanguageElement*> lang_element;
-    std::optional<FunctionDefinition> func_definition;
+    std::optional<FunctionDefinition*> func_definition;
 
     lexer.getNextToken();
     while(
@@ -20,7 +20,7 @@ Program Parser::parseProgram() {
         }
     }
 
-    return Program(statements, std::map<std::string, FunctionDefinition>());
+    return Program(statements, std::map<std::string, FunctionDefinition*>());
 }
 
 std::optional<LanguageElement *> Parser::tryToParseLanguageElement() {
@@ -54,7 +54,7 @@ std::optional<LanguageElement *> Parser::tryToParseSemicolonEnded(){
     return std::nullopt;
 }
 
-std::optional<FunctionDefinition> Parser::tryToParseFuncDef() {
+std::optional<FunctionDefinition*> Parser::tryToParseFuncDef() {
     if( lexer.getCurrentToken().getType() == TokenType::FUNC )
     {
         if( lexer.getNextToken().getType() != TokenType::LABEL )
@@ -101,7 +101,7 @@ std::optional<FunctionDefinition> Parser::tryToParseFuncDef() {
             throw std::runtime_error("func def invalid");
         }
 
-        return FunctionDefinition(func_name, parameters, func_body.value());
+        return new FunctionDefinition(func_name, parameters, func_body.value());
     }
 
     return std::nullopt;
@@ -116,7 +116,7 @@ std::optional<LanguageElement *> Parser::tryToParseBlock() {
         std::vector<std::unique_ptr<LanguageElement>> statement_vec;
 
         while ((statement = tryToParseLanguageElement())) {
-            statement_vec.push_back( std::make_unique<LanguageElement>(*statement.value()) );
+            statement_vec.push_back( std::move( std::make_unique<LanguageElement>( statement.value() ) ) );
         }
 
         if (lexer.getCurrentToken().getType() != TokenType::CURLY_BRACKET_CLOSE )
@@ -550,7 +550,7 @@ std::optional<Assignable *> Parser::tryToParseList() {
                     throw std::runtime_error("elements invalid");
                 }
             }
-            return new List( elements );
+            return new ListOfAssignable( elements );
         }
     }
     return std::nullopt;

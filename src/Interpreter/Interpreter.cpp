@@ -1,7 +1,7 @@
 #include "Interpreter.h"
 
 void Interpreter::interpret(const Program& program) {
-    scope_stack.init_global(std::map<std::string, FunctionDefinition>());
+    scope_stack.init_global(std::map<std::string, FunctionDefinition*>());
 
     for( auto elem : program.instructions )
     {
@@ -14,18 +14,24 @@ void Interpreter::interpret(ForEachLoop *for_each_loop) {
 }
 
 void Interpreter::interpret(FunctionCall *function_call) {
-    auto func_params = scope_stack.get_function(function_call->getName())->getParameters();
-    auto func_args = function_call->getArguments().getArgs();
+    auto func_def = scope_stack.get_function(function_call->getName());
+    auto func_params = func_def->getParameters();
 
-    std::map<std::string, Assignable*> call_init;
+    auto func_args = function_call->getArguments().getArgs();
+    // todo: porownac liczbe param i args
+    // std::zip
+    std::map<std::string, VariantValue*> call_init;
 
     for (int i = 0; i < func_params.size(); ++i)
     {
         func_args[i]->be_evaluated(this);
-        call_init[func_params[i]] = scope_stack.get_last_result().value();
+        call_init[func_params[i]] = scope_stack.get_last_result();
     }
 
+    //todo: DONE stworzenie callcontext wewnatrz make_Call
     scope_stack.make_call(call_init);
+
+    func_def->getBody()->be_handled(this);
 
     scope_stack.return_call();
 }
@@ -52,13 +58,13 @@ void Interpreter::interpret(If *if_statement) {
 void Interpreter::interpret(RepeatLoop *repeat_loop) {
     repeat_loop->getRepeats()->be_evaluated(this);
 
-    if( std::holds_alternative<int>(scope_stack.get_last_result().value()) )
+    if( scope_stack.get_last_result() != nullptr )
     {
-        for( int i = std::get<int>(scope_stack.get_last_result().value()); i > 0; i-- )
+        for( int i = scope_stack.get_last_result()->to_number(); i > 0; i-- )
         {
             repeat_loop->getLoop()->be_handled(this);
 
-            if( scope_stack.get_last_returned() != std::nullopt )
+            if( scope_stack.get_last_returned() != nullptr )
             {
                 break;
             }
@@ -71,11 +77,11 @@ void Interpreter::interpret(RepeatLoop *repeat_loop) {
 void Interpreter::interpret(WhileLoop *while_loop) {
     while_loop->getCondition()->be_evaluated(this);
 
-    if( std::holds_alternative<bool>(scope_stack.get_last_result().value()) )
+    if( scope_stack.get_last_result()->to_bool() )
     {
         while_loop->getLoop()->be_handled(this);
 
-        if( scope_stack.get_last_returned() != std::nullopt )
+        if( scope_stack.get_last_returned() != nullptr )
         {
             return;
         }
@@ -88,20 +94,20 @@ void Interpreter::interpret(WhileLoop *while_loop) {
 
 void Interpreter::interpret(Return *return_statement) {
     return_statement->getValue()->be_evaluated(this);
-    scope_stack.set_last_returned( scope_stack.get_last_result().value() );
+    scope_stack.set_last_returned( scope_stack.get_last_result() );
 }
 
 void Interpreter::interpret(VariableAssignment *variable_assignment) {
     variable_assignment->getValue()->be_evaluated(this);
 
-    scope_stack.set_var(variable_assignment->getLabel(), scope_stack.get_last_result().value());
+    scope_stack.set_var(variable_assignment->getLabel(), scope_stack.get_last_result());
 }
 
 void Interpreter::interpret(VariableDeclaration *variable_declaration) {
     if( scope_stack.is_symbol_defined(variable_declaration->getLabel()))
         throw std::runtime_error("symbol defined");
-    //todo: powinna być ewaluacja
-    scope_stack.set_var(variable_declaration->getLabel(), variable_declaration->getValue());
+    variable_declaration->getValue()->be_evaluated(this);
+    scope_stack.set_var(variable_declaration->getLabel(), scope_stack.get_last_result());
 }
 
 void Interpreter::interpret(Block *block) {
@@ -109,7 +115,7 @@ void Interpreter::interpret(Block *block) {
     for(auto const & statement : block->getStatements())
     {
         statement->be_handled(this);
-        if(scope_stack.get_last_returned() != std::nullopt )
+        if(scope_stack.get_last_returned() != nullptr )
         {
             break;
         }
@@ -125,14 +131,12 @@ void Interpreter::evaluate(OrCondition *or_condition) {
 
     auto left_val = scope_stack.get_last_result();
 
+    //todo: chyba trzeba pominąc pierwszy, bo już był ewaluowany
     for( auto e : expressions )
     {
         e->be_evaluated(this);
-
-        left_val = left_val || std::get<bool>(scope_stack.get_last_result().value());
+        scope_stack.set_last_result( *left_val || scope_stack.get_last_result() );
     }
-
-    scope_stack.set_last_result( left_val.value() );
 }
 
 void Interpreter::evaluate(AndCondition *and_condition) {
@@ -142,14 +146,12 @@ void Interpreter::evaluate(AndCondition *and_condition) {
 
     auto left_val = scope_stack.get_last_result();
 
+    //todo: to samo co wyżej
     for( auto e : expressions )
     {
         e->be_evaluated(this);
-
-        left_val = left_val && std::get<bool>(scope_stack.get_last_result().value());
+        scope_stack.set_last_result( *left_val && scope_stack.get_last_result() );
     }
-
-    scope_stack.set_last_result( left_val.value() );
 }
 
 void Interpreter::evaluate(EqualityCondition *equality_condition) {
@@ -157,19 +159,18 @@ void Interpreter::evaluate(EqualityCondition *equality_condition) {
 
     if( equality_condition->getEquals() != std::nullopt )
     {
-        auto left_val = scope_stack.get_last_result().value();
+        auto left_val = scope_stack.get_last_result();
 
         equality_condition->getSecondCondition().value()->be_evaluated(this);
 
         if( equality_condition->getEquals().value() )
         {
-            left_val = (left_val == scope_stack.get_last_result().value());
-        }else
-        {
-            left_val = (left_val != scope_stack.get_last_result().value() );
+            scope_stack.set_last_result( new Bool( *left_val == scope_stack.get_last_result()));
         }
-
-        scope_stack.set_last_result(left_val);
+        else
+        {
+            scope_stack.set_last_result( new Bool( *left_val != scope_stack.get_last_result()));
+        }
     }
 }
 
@@ -178,109 +179,131 @@ void Interpreter::evaluate(Comparison *comparison) {
 
     if( comparison->getType() != std::nullopt )
     {
-        auto left_val = scope_stack.get_last_result().value();
+        auto left_val = scope_stack.get_last_result();
 
         comparison->getSecondExpression().value()->be_evaluated(this);
 
-        if( comparison->getType().value() == RelationType::LOWER )
+        switch( comparison->getType().value() )
         {
-            left_val = (left_val < scope_stack.get_last_result().value());
-        }else if( comparison->getType().value() == RelationType::LOWER_OR_EQUAL)
-        {
-            left_val = (left_val <= scope_stack.get_last_result().value() );
-        }else if( comparison->getType().value() == RelationType::GREATER_OR_EQUAL)
-        {
-            left_val = (left_val >= scope_stack.get_last_result().value() );
-        }else
-        {
-            left_val = (left_val > scope_stack.get_last_result().value() );
-        }
+            case RelationType::LOWER:
+                scope_stack.set_last_result( new Bool( *left_val < scope_stack.get_last_result() ) );
+                break;
+            case RelationType::LOWER_OR_EQUAL:
+                scope_stack.set_last_result( new Bool( *left_val <= scope_stack.get_last_result() ));
+                break;
+            case RelationType::GREATER_OR_EQUAL:
+                scope_stack.set_last_result( new Bool( *left_val >= scope_stack.get_last_result() ));
+                break;
+            case RelationType::GREATER:
+                scope_stack.set_last_result( new Bool( *left_val > scope_stack.get_last_result() ));
+                break;
+            default:
+                throw std::runtime_error("unknown comparision type");
 
-        scope_stack.set_last_result(left_val);
+        }
     }
 }
 
 void Interpreter::evaluate(AdditiveExpression *additive_expression) {
     additive_expression->getExpressions()[0]->be_evaluated(this);
 
-    auto left_val = scope_stack.get_last_result().value();
-
     for( int i = 0; i < additive_expression->getOperators().size(); ++i )
     {
+        auto left_val = scope_stack.get_last_result();
+
         auto op = additive_expression->getOperators()[i];
         auto exp = additive_expression->getExpressions()[i+1];
 
         exp->be_evaluated(this);
 
-        if( op.getType() == OperationType::SUM )
+        switch( op.getType() )
         {
-            left_val += scope_stack.get_last_result().value();
-        }else
-        {
-            left_val -= scope_stack.get_last_result().value();
+            case OperationType::SUM:
+                scope_stack.set_last_result( *left_val + scope_stack.get_last_result());
+                break;
+            case OperationType::SUBSTRACTION:
+                scope_stack.set_last_result( *left_val - scope_stack.get_last_result());
+                break;
+            default:
+                throw std::runtime_error("unknown addition operator");
         }
     }
-
-    scope_stack.set_last_result( left_val );
 }
 
 void Interpreter::evaluate(MultiplyExpression *multiply_expression) {
     multiply_expression->getElements()[0]->be_evaluated(this);
 
-    auto left_val = scope_stack.get_last_result().value();
 
     for( int i = 0; i < multiply_expression->getOperators().size(); ++i )
     {
+        auto left_val = scope_stack.get_last_result();
+
         auto op = multiply_expression->getOperators()[i];
         auto exp = multiply_expression->getElements()[i+1];
 
         exp->be_evaluated(this);
 
-        if( op.getType() == OperationType::MULTIPLY )
+        switch( op.getType() )
         {
-            left_val *= scope_stack.get_last_result().value();
-        }else
-        {
-            left_val /= scope_stack.get_last_result().value();
+            case OperationType::MULTIPLY:
+                scope_stack.set_last_result( *left_val * scope_stack.get_last_result());
+                break;
+            case OperationType::DIVIDE:
+                scope_stack.set_last_result( *left_val / scope_stack.get_last_result());
+                break;
+            default:
+                throw std::runtime_error("unknown multiply operator");
         }
     }
-
-    scope_stack.set_last_result( left_val );
 }
 
 void Interpreter::evaluate(FunctionCall *function_call) {
     function_call->be_handled(this);
-    scope_stack.set_last_result( scope_stack.get_last_returned().value() );
+    scope_stack.set_last_result( scope_stack.get_last_returned() );
 }
 
 void Interpreter::evaluate(Bool *bool_val) {
-    scope_stack.set_last_result(bool_val->get_value());
+    scope_stack.set_last_result(bool_val);
 }
 
 void Interpreter::evaluate(String *string_val) {
-    scope_stack.set_last_result(string_val->get_value());
+    scope_stack.set_last_result(string_val);
 }
 
 void Interpreter::evaluate(Number *num_val) {
-    scope_stack.set_last_result(num_val->get_value());
+    scope_stack.set_last_result(num_val);
 }
 
-void Interpreter::evaluate(List *list_val) {
-    scope_stack.set_last_result(list_val->get_elements());
+void Interpreter::evaluate(ListOfVariantValues *list_val) {
+    scope_stack.set_last_result(list_val);
 }
 
 void Interpreter::evaluate(Label *label_val) {
-    auto var = scope_stack.get_var(label_val->getLabel());
-
-    var->be_evaluated(this);
+    scope_stack.set_last_result(scope_stack.get_var(label_val->get_variable_name()));
 }
 
 void Interpreter::evaluate(NegatedMathElement *negated_math_element) {
-    negated_math_element->be_evaluated(this);
-    scope_stack.set_last_result( -1 * scope_stack.get_last_result().value() );
+    negated_math_element->getElement()->be_evaluated(this);
+    scope_stack.set_last_result( new Number(-1 * scope_stack.get_last_result()->to_number()) );
 }
 
 void Interpreter::evaluate(NegatedLogicalElement *negated_logical_element) {
-    negated_logical_element->be_evaluated(this);
-    scope_stack.set_last_result(  !scope_stack.get_last_result().value() );
+    negated_logical_element->getElement()->be_evaluated(this);
+    scope_stack.set_last_result(  new Bool(!scope_stack.get_last_result()->to_bool()) );
+}
+
+void Interpreter::evaluate(ListOfAssignable *list_val) {
+    std::vector<VariantValue*> values;
+
+    for( auto expression : list_val->get_elements() )
+    {
+        expression->be_evaluated( this );
+        values.emplace_back( scope_stack.get_last_result() );
+    }
+
+    scope_stack.set_last_result( new ListOfVariantValues(values) );
+}
+
+void Interpreter::evaluate(RelationalCondition *multiply_expression) {
+
 }

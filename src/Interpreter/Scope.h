@@ -3,20 +3,21 @@
 
 #include <map>
 #include <string>
+#include <utility>
 
 #include "../Program/LanguageElements/FunctionDefinition.h"
-#include "../Program/LanguageElements/Variables/Assignable.h"
+#include "../Program/LanguageElements/Variables/VariantValue.h"
 
 class Scope {
-    std::map<std::string, Assignable*> symbols;
+    std::map<std::string, VariantValue*> symbols;
 public:
     Scope() {};
 
-    Scope(std::map<std::string, Assignable*> args): symbols{args} {}
+    Scope(std::map<std::string, VariantValue *> args): symbols{std::move(args)} {}
 
-    void set_symbol(const std::string& name, Assignable *value_ = nullptr);
+    void set_symbol(const std::string& name, VariantValue *value_ = nullptr);
 
-    Assignable * get_symbol(const std::string& name );
+    VariantValue* get_symbol(const std::string& name );
 
     bool is_symbol_defined(const std::string& name );
 };

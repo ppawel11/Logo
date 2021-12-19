@@ -1,18 +1,30 @@
-#ifndef TKOM_STRING_H
-#define TKOM_STRING_H
+#ifndef TKOM_LISTOFVARIANTVALUES_H
+#define TKOM_LISTOFVARIANTVALUES_H
 
 #include "Assignable.h"
 #include "VariantValue.h"
 
-#include <string>
 #include <utility>
+#include <vector>
 
-class String: public Assignable, public VariantValue {
-    std::string value;
+class ListOfVariantValues: public Assignable, public VariantValue {
+    std::vector<VariantValue*> elements;
+
 public:
-    explicit String( std::string value_ ): value{std::move(value_)}, Assignable() {}
+    explicit ListOfVariantValues(std::vector<VariantValue *> elements) : elements{std::move(elements )} {}
 
     void be_evaluated(Interpreter *interpreter) override;
+
+    bool to_bool() override;
+    std::string to_string() override;
+    int to_number() override;
+    std::vector<VariantValue *> to_list() override;
+
+    void set_value(bool value_) override;
+    void set_value(int value_) override;
+    void set_value(std::vector<VariantValue *> value_) override;
+    void set_value(std::string value_) override;
+    void set_value(VariantValue *value_) override;
 
     VariantValue *operator+(VariantValue *other_value) override;
     VariantValue *operator+(String *other_value) override;
@@ -85,18 +97,7 @@ public:
     bool operator>=(Bool *other_value) override;
     bool operator>=(Number *other_value) override;
     bool operator>=(ListOfVariantValues *other_value) override;
-
-
-    bool to_bool() override;
-    std::string to_string() override;
-    int to_number() override;
-    std::vector<VariantValue *> to_list() override;
-
-    void set_value(VariantValue *value_) override;
-    void set_value(bool value_) override;
-    void set_value(int value_) override;
-    void set_value(std::vector<VariantValue *> value_) override;
-    void set_value(std::string value_) override;
 };
 
-#endif //TKOM_STRING_H
+
+#endif //TKOM_LISTOFVARIANTVALUES_H

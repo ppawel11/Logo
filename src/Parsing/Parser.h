@@ -22,16 +22,15 @@
 #include "../Program/LanguageElements/Math/NegatedMathElement.h"
 #include "../Program/LanguageElements/Logical/NegatedLogicalElement.h"
 #include "../Program/LanguageElements/RepeatLoop.h"
-#include "../Program/LanguageElements/Math/MathElement.h"
 #include "../Program/LanguageElements/Variables/Number.h"
 #include "../Program/LanguageElements/Variables/Bool.h"
-#include "../Program/LanguageElements/Variables/Label.h"
 #include "../Program/LanguageElements/If.h"
 #include "../Program/LanguageElements/VariableDeclaration.h"
 #include "../Program/LanguageElements/Return.h"
-#include "../Program/LanguageElements/Variables/List.h"
+#include "../Program/LanguageElements/ListOfAssignable.h"
 #include "../Program/LanguageElements/Variables/String.h"
 #include "../Program/LanguageElements/Block.h"
+#include "../Program/LanguageElements/Label.h"
 #include "../Program/LanguageElements/FunctionDefinition.h"
 
 
@@ -44,7 +43,7 @@ public:
     Program parseProgram();
 
 private:
-    std::optional<FunctionDefinition> tryToParseFuncDef();
+    std::optional<FunctionDefinition*> tryToParseFuncDef();
 
     std::optional<LanguageElement *> tryToParseLanguageElement();
 

@@ -10,6 +10,8 @@ public:
     explicit NegatedLogicalElement(Assignable* element_): element{ element_} {}
 
     void be_evaluated(Interpreter *interpreter) override;
+
+    Assignable *getElement() const;
 };
 
 
