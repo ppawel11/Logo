@@ -9,15 +9,15 @@
 #include "../Program/LanguageElements/Variables/VariantValue.h"
 
 class Scope {
-    std::map<std::string, VariantValue*> symbols;
+    std::map<std::string, std::unique_ptr<VariantValue>> symbols;
 public:
-    Scope() {};
+    Scope() = default;;
 
-    Scope(std::map<std::string, VariantValue *> args): symbols{std::move(args)} {}
+    explicit Scope(std::map<std::string, std::unique_ptr<VariantValue>> args): symbols{std::move(args)} {}
 
-    void set_symbol(const std::string& name, VariantValue *value_ = nullptr);
+    void set_symbol(const std::string& name, std::unique_ptr<VariantValue> value_ = nullptr);
 
-    VariantValue* get_symbol(const std::string& name );
+    const std::unique_ptr<VariantValue> & get_symbol(const std::string& name );
 
     bool is_symbol_defined(const std::string& name );
 };

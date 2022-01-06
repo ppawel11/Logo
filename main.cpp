@@ -12,6 +12,7 @@
 
 #include "../../src/Program/LanguageElements/Variables/VariantValue.h"
 #include "../../src/Program/LanguageElements/Variables/Bool.h"
+#include "../../src/Program/LanguageElements/Variables/Number.h"
 
 int main(int argc, char** argv) {
 //    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -40,14 +41,21 @@ int main(int argc, char** argv) {
 //    {
 //
 //    }
-    VariantValue* val1 = new Bool(true);
-    VariantValue* val2 = new Bool(false);
+//    auto val1 = std::make_unique<Bool>(true);
+//    auto val1 = std::make_unique<Bool>(true);
+    std::unique_ptr<VariantValue> val1 = std::make_unique<Bool>(true);
+    std::unique_ptr<VariantValue> val2 = std::make_unique<Bool>(false);
+    std::unique_ptr<VariantValue> val3 = std::make_unique<Number>(1);
+    std::unique_ptr<VariantValue> val4 = std::make_unique<Number>(2);
 
-    VariantValue* and_ = *val1 && val2;
-    VariantValue* or_ = *val1 || val2;
 
-    dynamic_cast<Bool*>(and_)->to_bool() ? std::cout<<"and true"<<std::endl : std::cout<<"and false"<<std::endl;
-    dynamic_cast<Bool*>(or_)->to_bool() ? std::cout<<"or true"<<std::endl : std::cout<<"or false"<<std::endl;
+    std::unique_ptr<VariantValue> and_ = *val1 && val2;
+    std::unique_ptr<VariantValue> sum_ = *val3 + val4.get();
+//    auto or_ = *val1 || val2.get();
 
+    and_->to_bool() ? std::cout<<"and true"<<std::endl : std::cout<<"and false"<<std::endl;
+    std::cout<<"sumowanie: "<<sum_->to_number()<<std::endl;
+//    or_->to_bool() ? std::cout<<"or true"<<std::endl : std::cout<<"or false"<<std::endl;
+    std::cout<<"..."<<std::endl;
     return 0;
 }

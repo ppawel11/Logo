@@ -99,6 +99,17 @@ set(SOURCE
         src/Program/LanguageElements/ListOfAssignable.h
         src/Program/LanguageElements/Logical/NegatedLogicalElement.cpp
         src/Program/LanguageElements/Logical/NegatedLogicalElement.h
+        src/Interpreter/OperationExecutors/SumExecutor.h
+        src/Interpreter/OperationExecutors/DivisionExecutor.h
+        src/Interpreter/OperationExecutors/MultiplicationExecutor.h
+        src/Interpreter/OperationExecutors/SubtractionExecutor.h
+        src/Interpreter/OperationExecutors/AndExecutor.h
+        src/Interpreter/OperationExecutors/OrExecutor.h
+        src/Interpreter/OperationExecutors/EqualityExecutor.h
+        src/Interpreter/OperationExecutors/LessExecutor.h
+        src/Interpreter/OperationExecutors/LessOrEqualExecutor.h
+        src/Interpreter/OperationExecutors/GreaterExecutor.h
+        src/Interpreter/OperationExecutors/GreaterOrEqualExecutor.h
         )
 
 

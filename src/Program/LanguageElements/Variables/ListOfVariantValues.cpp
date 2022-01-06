@@ -5,126 +5,126 @@ void ListOfVariantValues::be_evaluated(Interpreter *interpreter) {
     interpreter->evaluate(this);
 }
 
-VariantValue* ListOfVariantValues::operator+(VariantValue* other_value) {
-    VariantValue* result = *other_value + this;
+std::unique_ptr<VariantValue> ListOfVariantValues::operator+(VariantValue* other_value) {
+    std::unique_ptr<VariantValue> result = *other_value + this;
     return result;
 }
 
-VariantValue* ListOfVariantValues::operator+(String* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator+(String* other_value) {
     throw std::runtime_error("invalid operation addition on list and string");
 }
 
-VariantValue* ListOfVariantValues::operator+(Bool* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator+(Bool* other_value) {
     throw std::runtime_error("invalid operation addition on list and bool");
 }
 
-VariantValue* ListOfVariantValues::operator+(Number* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator+(Number* other_value) {
     throw std::runtime_error("invalid operation addition on list and number");
 }
 
-VariantValue* ListOfVariantValues::operator+(ListOfVariantValues* other_value) {
-    std::vector<VariantValue*> new_elements = other_value->to_list();
+std::unique_ptr<VariantValue> ListOfVariantValues::operator+(ListOfVariantValues* other_value) {
+    std::vector<std::shared_ptr<VariantValue>> new_elements = other_value->to_list();
     std::copy(elements.begin(), elements.end(), std::back_inserter(new_elements));
-    return new ListOfVariantValues(new_elements );
+    return std::make_unique<ListOfVariantValues>(new_elements );
 }
 
-VariantValue* ListOfVariantValues::operator-(VariantValue* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator-(VariantValue* other_value) {
     throw std::runtime_error("invalid operation subtract on list and other value");
 }
 
-VariantValue* ListOfVariantValues::operator-(String* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator-(String* other_value) {
     throw std::runtime_error("invalid operation subtract on list and string");
 }
 
-VariantValue* ListOfVariantValues::operator-(Bool* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator-(Bool* other_value) {
     throw std::runtime_error("invalid operation subtract on list and bool");
 }
 
-VariantValue* ListOfVariantValues::operator-(Number* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator-(Number* other_value) {
     throw std::runtime_error("invalid operation subtract on list and number");
 }
 
-VariantValue* ListOfVariantValues::operator-(ListOfVariantValues* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator-(ListOfVariantValues* other_value) {
     throw std::runtime_error("invalid operation subtract on list and list");
 }
 
-VariantValue* ListOfVariantValues::operator*(VariantValue* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator*(VariantValue* other_value) {
     throw std::runtime_error("invalid operation multiply on list and other value");
 }
 
-VariantValue* ListOfVariantValues::operator*(String* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator*(String* other_value) {
     throw std::runtime_error("invalid operation multiply on list and string");
 }
 
-VariantValue* ListOfVariantValues::operator*(Bool* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator*(Bool* other_value) {
     throw std::runtime_error("invalid operation multiply on list and bool");
 }
 
-VariantValue* ListOfVariantValues::operator*(Number* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator*(Number* other_value) {
     throw std::runtime_error("invalid operation multiply on list and number");
 }
 
-VariantValue* ListOfVariantValues::operator*(ListOfVariantValues* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator*(ListOfVariantValues* other_value) {
     throw std::runtime_error("invalid operation multiply on list and list");
 }
 
-VariantValue* ListOfVariantValues::operator/(VariantValue* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator/(VariantValue* other_value) {
     throw std::runtime_error("invalid operation divide on list and other value");
 }
 
-VariantValue* ListOfVariantValues::operator/(String* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator/(String* other_value) {
     throw std::runtime_error("invalid operation divide on list and string");
 }
 
-VariantValue* ListOfVariantValues::operator/(Bool* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator/(Bool* other_value) {
     throw std::runtime_error("invalid operation divide on list and bool");
 }
 
-VariantValue* ListOfVariantValues::operator/(Number* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator/(Number* other_value) {
     throw std::runtime_error("invalid operation divide on list and number");
 }
 
-VariantValue* ListOfVariantValues::operator/(ListOfVariantValues* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator/(ListOfVariantValues* other_value) {
     throw std::runtime_error("invalid operation divide on list and list");
 }
 
-VariantValue* ListOfVariantValues::operator&&(VariantValue* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator&&(const std::unique_ptr<VariantValue> & other_value) {
     throw std::runtime_error("invalid operation and on list and other value");
 }
 
-VariantValue* ListOfVariantValues::operator&&(String* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator&&(String* other_value) {
     throw std::runtime_error("invalid operation and on list and string");
 }
 
-VariantValue* ListOfVariantValues::operator&&(Bool* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator&&(Bool* other_value) {
     throw std::runtime_error("invalid operation and on list and bool");
 }
 
-VariantValue* ListOfVariantValues::operator&&(Number* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator&&(Number* other_value) {
     throw std::runtime_error("invalid operation and on list and number");
 }
 
-VariantValue* ListOfVariantValues::operator&&(ListOfVariantValues* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator&&(ListOfVariantValues* other_value) {
     throw std::runtime_error("invalid operation and on list and list");
 }
 
-VariantValue* ListOfVariantValues::operator||(VariantValue* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator||(VariantValue* other_value) {
     throw std::runtime_error("invalid operation or on list and other value");
 }
 
-VariantValue* ListOfVariantValues::operator||(String* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator||(String* other_value) {
     throw std::runtime_error("invalid operation or on list and string");
 }
 
-VariantValue* ListOfVariantValues::operator||(Bool* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator||(Bool* other_value) {
     throw std::runtime_error("invalid operation or on list and bool");
 }
 
-VariantValue* ListOfVariantValues::operator||(Number* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator||(Number* other_value) {
     throw std::runtime_error("invalid operation or on list and number");
 }
 
-VariantValue* ListOfVariantValues::operator||(ListOfVariantValues* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator||(ListOfVariantValues* other_value) {
     throw std::runtime_error("invalid operation or on list and list");
 }
 
@@ -134,7 +134,7 @@ bool ListOfVariantValues::to_bool() {
 
 std::string ListOfVariantValues::to_string() {
     std::string printed_list = "[";
-    for( auto elem : elements )
+    for( auto& elem : elements )
     {
         printed_list += elem->to_string() + ", ";
     }
@@ -146,7 +146,7 @@ int ListOfVariantValues::to_number() {
     throw std::runtime_error("list has no numeric value");
 }
 
-std::vector<VariantValue *> ListOfVariantValues::to_list() {
+std::vector<std::shared_ptr<VariantValue>> ListOfVariantValues::to_list() {
     return elements;
 }
 
@@ -158,7 +158,7 @@ void ListOfVariantValues::set_value(int value_) {
     throw std::runtime_error("list has no int value");
 }
 
-void ListOfVariantValues::set_value(std::vector<VariantValue *> value_) {
+void ListOfVariantValues::set_value(std::vector<std::shared_ptr<VariantValue>> value_) {
     elements = value_;
 }
 
@@ -170,129 +170,130 @@ void ListOfVariantValues::set_value(VariantValue *value_) {
     elements = value_->to_list();
 }
 
-bool ListOfVariantValues::operator==(VariantValue* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator==(VariantValue* other_value) {
     return *other_value == this;
 }
 
-bool ListOfVariantValues::operator==(String* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator==(String* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and string");
 }
 
-bool ListOfVariantValues::operator==(Bool* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator==(Bool* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and bool");
 }
 
-bool ListOfVariantValues::operator==(Number* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator==(Number* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and number");
 }
 
-bool ListOfVariantValues::operator==(ListOfVariantValues* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator==(ListOfVariantValues* other_value) {
     if( elements.size() != other_value->to_list().size())
-        return false;
+        return std::make_unique<Bool>(false);
+
     for( int i = 0; i < elements.size(); ++i )
     {
-        if( *elements[i] != other_value->to_list()[i] )
-            return false;
+        if( *elements[i] != other_value->to_list()[i].get() )
+            return std::make_unique<Bool>(false);
     }
-    return true;
+    return std::make_unique<Bool>(true);
 }
 
-bool ListOfVariantValues::operator!=(VariantValue* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator!=(VariantValue* other_value) {
     return *other_value != this;
 }
 
-bool ListOfVariantValues::operator!=(String* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator!=(String* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and string");
 }
 
-bool ListOfVariantValues::operator!=(Bool* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator!=(Bool* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and bool");
 }
 
-bool ListOfVariantValues::operator!=(Number* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator!=(Number* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and number");
 }
 
-bool ListOfVariantValues::operator!=(ListOfVariantValues* other_value) {
-    return !( *this == other_value );
+std::unique_ptr<VariantValue> ListOfVariantValues::operator!=(ListOfVariantValues* other_value) {
+    return std::make_unique<Bool>( !( *this == other_value ) );
 }
 
-bool ListOfVariantValues::operator<(VariantValue* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator<(VariantValue* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and other value");
 }
 
-bool ListOfVariantValues::operator<(String* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator<(String* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and string");
 }
 
-bool ListOfVariantValues::operator<(Bool* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator<(Bool* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and bool");
 }
 
-bool ListOfVariantValues::operator<(Number* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator<(Number* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and number");
 }
 
-bool ListOfVariantValues::operator<(ListOfVariantValues* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator<(ListOfVariantValues* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and listofvariantvalues");
 }
 
-bool ListOfVariantValues::operator<=(VariantValue* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator<=(VariantValue* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and other value");
 }
 
-bool ListOfVariantValues::operator<=(String* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator<=(String* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and string");
 }
 
-bool ListOfVariantValues::operator<=(Bool* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator<=(Bool* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and bool");
 }
 
-bool ListOfVariantValues::operator<=(Number* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator<=(Number* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and number");
 }
 
-bool ListOfVariantValues::operator<=(ListOfVariantValues* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator<=(ListOfVariantValues* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and listofvariantvalues");
 }
 
-bool ListOfVariantValues::operator>(VariantValue* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator>(VariantValue* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and other value");
 }
 
-bool ListOfVariantValues::operator>(String* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator>(String* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and string");
 }
 
-bool ListOfVariantValues::operator>(Bool* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator>(Bool* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and bool");
 }
 
-bool ListOfVariantValues::operator>(Number* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator>(Number* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and number");
 }
 
-bool ListOfVariantValues::operator>(ListOfVariantValues* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator>(ListOfVariantValues* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and listofvariantvalues");
 }
 
-bool ListOfVariantValues::operator>=(VariantValue* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator>=(VariantValue* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and other value");
 }
 
-bool ListOfVariantValues::operator>=(String* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator>=(String* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and string");
 }
 
-bool ListOfVariantValues::operator>=(Bool* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator>=(Bool* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and bool");
 }
 
-bool ListOfVariantValues::operator>=(Number* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator>=(Number* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and number");
 }
 
-bool ListOfVariantValues::operator>=(ListOfVariantValues* other_value) {
+std::unique_ptr<VariantValue> ListOfVariantValues::operator>=(ListOfVariantValues* other_value) {
     throw std::runtime_error("invalid operation comparison on listofvariantvalues and listofvariantvalues");
 }

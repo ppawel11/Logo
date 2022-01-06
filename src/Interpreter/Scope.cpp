@@ -2,11 +2,11 @@
 
 #include <utility>
 
-void Scope::set_symbol(const std::string& name, VariantValue *value_) {
-    symbols[name] = value_;
+void Scope::set_symbol(const std::string& name, std::unique_ptr<VariantValue> value_) {
+    symbols[name] = std::move(value_);
 }
 
-VariantValue * Scope::get_symbol(const std::string& name) {
+const std::unique_ptr<VariantValue> & Scope::get_symbol(const std::string& name) {
     if(is_symbol_defined(name) )
     {
         return symbols[name];

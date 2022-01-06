@@ -6,7 +6,7 @@ void ScopeStack::make_call() {
     call_stack.push(CallContext());
 }
 
-void ScopeStack::make_call(std::map<std::string, VariantValue *> args) {
+void ScopeStack::make_call(std::map<std::string, std::unique_ptr<VariantValue>> args) {
     call_stack.push(CallContext(std::move(args)));
 }
 
@@ -14,7 +14,7 @@ void ScopeStack::return_call() {
     call_stack.pop();
 }
 
-void ScopeStack::make_var(const std::string &name, VariantValue *value_) {
+void ScopeStack::make_var(const std::string &name, std::unique_ptr<VariantValue> value_) {
     if( !call_stack.empty() )
     {
         call_stack.top().set_variable(name, value_);
@@ -25,11 +25,12 @@ void ScopeStack::make_var(const std::string &name, VariantValue *value_) {
     }
 }
 
-VariantValue * ScopeStack::get_var(const std::string& name) {
-    return nullptr;
+std::unique_ptr<VariantValue> & ScopeStack::get_var(const std::string& name) {
+    //todo: odnajdywanie zmiennej na stosie scopów
+    return last_result;
 }
 
-void ScopeStack::set_var(const std::string& name, VariantValue *value) {
+void ScopeStack::set_var(const std::string& name, std::unique_ptr<VariantValue> &value) {
     if( !call_stack.empty() )
     {
         call_stack.top().set_variable(name, value);
@@ -45,7 +46,6 @@ void ScopeStack::init_global(std::map<std::string, std::unique_ptr<FunctionDefin
 
     func_map = std::move(func_defs_);
 
-    last_returned = nullptr;
     last_result = nullptr;
 }
 
@@ -59,22 +59,24 @@ const std::unique_ptr<FunctionDefinition> & ScopeStack::get_function(const std::
     throw std::runtime_error("func not found");
 }
 
-VariantValue * ScopeStack::get_last_returned() const {
-    return last_returned;
-}
-
-void ScopeStack::set_last_returned(VariantValue *lastReturned) {
-    last_returned = lastReturned;
-}
-
-VariantValue * ScopeStack::get_last_result() const {
+std::unique_ptr<VariantValue> & ScopeStack::get_last_result() const {
     return last_result;
 }
 
-void ScopeStack::set_last_result(VariantValue *lastResult) {
-    last_result = lastResult;
+void ScopeStack::set_last_result(std::unique_ptr<VariantValue> lastResult) {
+    last_result = std::move(lastResult);
 }
 
 bool ScopeStack::is_symbol_defined(std::string name) {
+    // todo: odnalezienie zmiennej na stosie scopów
     return false;
 }
+
+const std::optional<std::variant<Number, Bool, String, ListOfVariantValues>> &ScopeStack::getLastResultVariant() const {
+    return last_result_variant;
+}
+
+void ScopeStack::setLastResultVariant( const std::optional<std::variant<Number, Bool, String, ListOfVariantValues>> & lastResultVariant ) {
+    last_result_variant = lastResultVariant;
+}
+
