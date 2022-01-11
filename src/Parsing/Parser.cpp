@@ -19,6 +19,10 @@ Program Parser::parseProgram() {
         {
             statements.push_back(std::move(lang_element.value()));
         }
+        else
+        {
+            func_definitions[func_definition.value()->getName()] = std::move(func_definition.value());
+        }
     }
 
     return Program( std::move(statements), std::move(func_definitions) );
@@ -88,7 +92,7 @@ std::optional<std::unique_ptr<FunctionDefinition>> Parser::tryToParseFuncDef() {
             }
         }
 
-        if( lexer.getNextToken().getType() != TokenType::PARENTHESIS_CLOSE )
+        if( lexer.getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
         {
             throw std::runtime_error("func def invalid");
         }
@@ -165,9 +169,10 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseIf() {
             {
                 throw std::runtime_error("else invalid");
             }
+            return std::make_unique<If>(std::move(condition.value()), std::move(if_statement.value()), std::move(else_statement.value()));
         }
 
-        return std::make_unique<If>(std::move(condition.value()), std::move(if_statement.value()), std::move(else_statement.value()));
+        return std::make_unique<If>(std::move(condition.value()), std::move(if_statement.value()), std::nullopt );
     }
 
     return std::nullopt;
@@ -245,7 +250,6 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseVarAssignment(
             throw std::runtime_error("var assignment invalid");
         }
 
-        lexer.getNextToken();
         return std::make_unique<VariableAssignment>(label, std::move(assignable.value()) );
     }
 
@@ -313,6 +317,7 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseForEachLoop() 
     {
         std::string element_label;
         std::string container_label;
+        std::optional<std::unique_ptr<Assignable>> container;
 
         if( lexer.getNextToken().getType() != TokenType::PARENTHESIS_OPEN ||
             lexer.getNextToken().getType() != TokenType::LABEL)
@@ -322,15 +327,20 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseForEachLoop() 
 
         element_label = lexer.getCurrentToken().getLiteralValue();
 
-        if( lexer.getNextToken().getType() != TokenType::COLON ||
-            lexer.getNextToken().getType() != TokenType::LABEL)
+        if( lexer.getNextToken().getType() != TokenType::COLON )
         {
             throw std::runtime_error("for invalid");
         }
 
-        container_label = lexer.getCurrentToken().getLiteralValue();
+        lexer.getNextToken();
 
-        if( lexer.getNextToken().getType() != TokenType::PARENTHESIS_CLOSE )
+        container = tryToParseAssignable();
+        if( container == std::nullopt )
+        {
+            throw std::runtime_error("for invalid");
+        }
+
+        if( lexer.getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
         {
             throw std::runtime_error("for invalid");
         }
@@ -344,7 +354,7 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseForEachLoop() 
             throw std::runtime_error("for invalid");
         }
 
-        return std::make_unique<ForEachLoop>(element_label, container_label, std::move(for_statements.value()));
+        return std::make_unique<ForEachLoop>(element_label, std::move(container.value()), std::move(for_statements.value()));
     }
 
     return std::nullopt;
@@ -393,7 +403,6 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseReturn() {
         {
             throw std::runtime_error("return invalid");
         }
-        lexer.getNextToken();
         return std::make_unique<Return>(std::move(return_value.value()));
     }
     return std::nullopt;
@@ -463,11 +472,11 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseMultiplyExpression(
         {
             if( lexer.getCurrentToken().getType() == TokenType::MULTIPLY )
             {
-                operators.emplace_back(OperationType::MULTIPLY);
+                operators.emplace_back(OperationType::MULTIPLY );
             }
             else
             {
-                operators.emplace_back(OperationType::DIVIDE);
+                operators.emplace_back(OperationType::DIVIDE );
             }
 
             lexer.getNextToken();
@@ -498,8 +507,8 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseMathElement() {
 
     if( lexer.getCurrentToken().getType() == TokenType::NUMBER )
     {
-        lexer.getNextToken();
         result = std::make_unique<Number>(lexer.getCurrentToken().getNumericValue());
+        lexer.getNextToken();
     }
     else if ( lexer.getCurrentToken().getType() == TokenType::LABEL )
     {
@@ -551,6 +560,10 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseList() {
                     throw std::runtime_error("elements invalid");
                 }
             }
+
+            if( lexer.getCurrentToken().getType() != TokenType::BRACKET_CLOSE )
+                throw std::runtime_error("list invalid");
+            lexer.getNextToken();
             return std::make_unique<ListOfAssignable>( std::move(elements) );
         }
     }
@@ -583,7 +596,8 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseParentExpression() 
     if( lexer.getCurrentToken().getType() == TokenType::PARENTHESIS_OPEN )
     {
         lexer.getNextToken();
-        if ( std::optional<std::unique_ptr<Assignable>> expr = tryToParseAdditiveExpression() )
+//        if ( std::optional<std::unique_ptr<Assignable>> expr = tryToParseAdditiveExpression() )
+        if ( std::optional<std::unique_ptr<Assignable>> expr = tryToParseOrCondition() )
         {
             if ( lexer.getCurrentToken().getType() == TokenType::PARENTHESIS_CLOSE )
             {
@@ -713,7 +727,6 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseRelationalCondition
     }
     else if ( std::optional<std::unique_ptr<Assignable>> comparison = tryToParseComparison() )
     {
-        //todo: czy tak można? i niżej?!
         result = std::move(comparison.value());
     }
     else if( std::optional<std::unique_ptr<Assignable>> parent_condition = tryToParseParentCondition() )

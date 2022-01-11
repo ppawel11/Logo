@@ -8,7 +8,7 @@ class AdditiveOperator {
     OperationType type;
 public:
     explicit AdditiveOperator(OperationType type_) {
-        if( type != OperationType::SUBSTRACTION && type != OperationType::SUM )
+        if( type_ != OperationType::SUBSTRACTION && type_ != OperationType::SUM )
         {
             throw std::runtime_error("additive operator invalid");
         }

@@ -11,10 +11,15 @@
 class AndExecutor {
 public:
 
-    template<typename U, typename V>
-    std::variant<Number, String, ListOfVariantValues, Bool> operator()(const U& lhs, const V &rhs)
+    std::variant<Number, Bool, String, ListOfVariantValues> operator()(const Bool& lhs, const Bool &rhs)
     {
-        throw std::runtime_error("");
+        return Bool( lhs.isValue() && rhs.isValue() );
+    }
+
+    template<typename U, typename V>
+    std::variant<Number, Bool, String, ListOfVariantValues> operator()(const U& lhs, const V &rhs)
+    {
+        throw std::runtime_error("invalid and types");
     }
 };
 

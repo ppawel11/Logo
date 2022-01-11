@@ -110,6 +110,9 @@ set(SOURCE
         src/Interpreter/OperationExecutors/LessOrEqualExecutor.h
         src/Interpreter/OperationExecutors/GreaterExecutor.h
         src/Interpreter/OperationExecutors/GreaterOrEqualExecutor.h
+        src/Interpreter/OperationExecutors/Caster.h
+        src/Interpreter/IOController/IOController.cpp
+        src/Interpreter/IOController/IOController.h
         )
 
 
@@ -123,6 +126,9 @@ set(TEST_SOURCE
 
 if(GUI)
     qt5_add_resources(QML_RESOURCES qrc/tkom.qrc)
+    set(SOURCE ${SOURCE}
+            src/GUI/DrawingController/DrawingController.cpp
+            src/GUI/DrawingController/DrawingController.h )
 endif()
 
 add_subdirectory(gtest)

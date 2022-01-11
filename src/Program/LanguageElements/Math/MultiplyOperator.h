@@ -10,7 +10,7 @@ class MultiplyOperator {
     OperationType type;
 public:
     explicit MultiplyOperator(OperationType type_) {
-        if( type != OperationType::MULTIPLY && type != OperationType::DIVIDE )
+        if( type_ != OperationType::MULTIPLY && type_ != OperationType::DIVIDE )
         {
             throw std::runtime_error("multiply operator invalid");
         }

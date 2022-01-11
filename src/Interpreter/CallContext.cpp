@@ -6,7 +6,7 @@ CallContext::CallContext() {
     scope_list.emplace_back(Scope());
 }
 
-CallContext::CallContext(std::map<std::string, std::unique_ptr<VariantValue>> args) {
+CallContext::CallContext(std::map<std::string, std::variant<Number, Bool, String, ListOfVariantValues>> args) {
     scope_list.emplace_back(Scope(std::move(args)));
 }
 
@@ -18,8 +18,8 @@ void CallContext::add_block_scope() {
     scope_list.emplace_back(Scope());
 }
 
-void CallContext::add_block_scope(std::map<std::string, std::unique_ptr<VariantValue>> args) {
-    scope_list.emplace_back(std::move(args));
+void CallContext::add_block_scope( const std::map<std::string, std::variant<Number, Bool, String, ListOfVariantValues>> &args) {
+    scope_list.emplace_back( Scope( args ) );
 }
 
 bool CallContext::is_symbol_declared(const std::string& name) {
@@ -31,19 +31,19 @@ bool CallContext::is_symbol_declared(const std::string& name) {
     return false;
 }
 
-void CallContext::set_variable(const std::string& name, std::unique_ptr<VariantValue> &value) {
+void CallContext::set_variable(const std::string &name, const std::variant<Number, Bool, String, ListOfVariantValues> &value) {
     for( auto it = scope_list.rbegin(); it != scope_list.rend(); it++)
     {
         if(it->is_symbol_defined(name)) {
-            it->set_symbol(name, std::move(value));
+            it->set_symbol(name, value);
             return;
         }
     }
 
-    scope_list.end()->set_symbol(name, std::move(value));
+    scope_list.rbegin()->set_symbol(name, value);
 }
 
-const std::unique_ptr<VariantValue> & CallContext::get_variable(const std::string& name) {
+std::variant<Number, Bool, String, ListOfVariantValues> CallContext::get_variable(const std::string& name) {
     for( auto it = scope_list.rbegin(); it != scope_list.rend(); it++)
     {
         if(it->is_symbol_defined(name)) {

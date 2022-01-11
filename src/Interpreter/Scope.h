@@ -6,18 +6,21 @@
 #include <utility>
 
 #include "../Program/LanguageElements/FunctionDefinition.h"
-#include "../Program/LanguageElements/Variables/VariantValue.h"
+#include "../Program/LanguageElements/Variables/Bool.h"
+#include "../Program/LanguageElements/Variables/Number.h"
+#include "../Program/LanguageElements/Variables/ListOfVariantValues.h"
+#include "../Program/LanguageElements/Variables/String.h"
 
 class Scope {
-    std::map<std::string, std::unique_ptr<VariantValue>> symbols;
+    std::map<std::string, std::variant<Number, Bool, String, ListOfVariantValues>> symbols {};
 public:
-    Scope() = default;;
+    Scope() = default;
 
-    explicit Scope(std::map<std::string, std::unique_ptr<VariantValue>> args): symbols{std::move(args)} {}
+    explicit Scope(std::map<std::string, std::variant<Number, Bool, String, ListOfVariantValues>> args): symbols{std::move(args)} {}
 
-    void set_symbol(const std::string& name, std::unique_ptr<VariantValue> value_ = nullptr);
+    void set_symbol(const std::string &name, const std::variant<Number, Bool, String, ListOfVariantValues> &value_ );
 
-    const std::unique_ptr<VariantValue> & get_symbol(const std::string& name );
+    std::variant<Number, Bool, String, ListOfVariantValues> get_symbol(const std::string& name );
 
     bool is_symbol_defined(const std::string& name );
 };

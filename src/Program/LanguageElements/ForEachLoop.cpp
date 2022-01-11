@@ -9,8 +9,8 @@ const std::string &ForEachLoop::getValueLabel() const {
     return value_label;
 }
 
-const std::string &ForEachLoop::getContainerLabel() const {
-    return container_label;
+const std::unique_ptr<Assignable> & ForEachLoop::getContainer() const {
+    return container;
 }
 
 const std::unique_ptr<LanguageElement> &ForEachLoop::getLoop() const {

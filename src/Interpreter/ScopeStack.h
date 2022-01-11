@@ -16,33 +16,42 @@ class ScopeStack {
     std::stack<CallContext> call_stack;
     std::map<std::string, std::unique_ptr<FunctionDefinition>> func_map;
 
-    mutable std::unique_ptr<VariantValue> last_result;
-    std::optional<std::variant<Number, Bool, String, ListOfVariantValues>> last_result_variant;
-public:
-    const std::optional<std::variant<Number, Bool, String, ListOfVariantValues>> &getLastResultVariant() const;
+    std::optional<std::variant<Number, Bool, String, ListOfVariantValues>> last_result;
 
-    void setLastResultVariant(
-            const std::optional<std::variant<Number, Bool, String, ListOfVariantValues>> &lastResultVariant);
+    bool returned;
 
 public:
-    ScopeStack(): last_result{ nullptr }, call_stack(), func_map() {}
+    bool isReturned() const;
+
+    void setReturned(bool returned);
+
+    ScopeStack(): last_result{ std::nullopt }, call_stack(), func_map(), returned{ false } {}
 
 
     void init_global(std::map<std::string, std::unique_ptr<FunctionDefinition>> func_defs_);
+
+    // Calls
     void make_call();
-    void make_call(std::map<std::string, std::unique_ptr<VariantValue>> args);
+    void make_call(const std::map<std::string, std::variant<Number, Bool, String, ListOfVariantValues>> &args);
     void return_call();
-    void make_var(const std::string &name, std::unique_ptr<VariantValue> value_);
+
+    // Scopes
+    void make_scope();
+    void make_scope(const std::map<std::string, std::variant<Number, Bool, String, ListOfVariantValues>> &args);
+    void end_scope();
+
+    // Functions
     void make_func(const std::string &name, std::unique_ptr<FunctionDefinition> func_def);
     const std::unique_ptr<FunctionDefinition> & get_function(const std::string & name);
-    std::unique_ptr<VariantValue> & get_var(const std::string& name);
-    void set_var(const std::string& name, std::unique_ptr<VariantValue> &value);
 
-    bool is_symbol_defined(std::string name);
+    // Variables
+    void set_var(const std::string &name, const std::variant<Number, Bool, String, ListOfVariantValues> &value);
+    std::variant<Number, Bool, String, ListOfVariantValues> get_var(const std::string& name);
+    bool is_symbol_defined(const std::string& name);
 
-    std::unique_ptr<VariantValue> & get_last_result() const;
-
-    void set_last_result(std::unique_ptr<VariantValue> lastResult);
+    // Last result
+    std::optional<std::variant<Number, Bool, String, ListOfVariantValues>> get_last_result() const;
+    void set_last_result(std::variant<Number, Bool, String, ListOfVariantValues> lastResult);
 };
 
 

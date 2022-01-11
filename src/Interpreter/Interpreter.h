@@ -19,12 +19,45 @@
 #include "../Program/LanguageElements/Logical/NegatedLogicalElement.h"
 #include "../Program/LanguageElements/Logical/Comparison.h"
 
+#include "OperationExecutors/SumExecutor.h"
+#include "OperationExecutors/SubtractionExecutor.h"
+#include "OperationExecutors/DivisionExecutor.h"
+#include "OperationExecutors/MultiplicationExecutor.h"
+#include "OperationExecutors/LessExecutor.h"
+#include "OperationExecutors/LessOrEqualExecutor.h"
+#include "OperationExecutors/EqualityExecutor.h"
+#include "OperationExecutors/GreaterExecutor.h"
+#include "OperationExecutors/GreaterOrEqualExecutor.h"
+#include "OperationExecutors/AndExecutor.h"
+#include "OperationExecutors/OrExecutor.h"
+#include "OperationExecutors/Caster.h"
+
+#include "IOController/IOController.h"
+#include "../GUI/DrawingController/DrawingController.h"
+#include <functional>
+
+typedef std::function<void()> Callback;
+
 class Interpreter {
     ScopeStack scope_stack;
-public:
-    explicit Interpreter( ) = default;
+    IOController io_controller;
+    DrawingController drawing_controller;
 
-    void interpret(const Program& program);
+    std::map<std::string, Callback> std_functions;
+public:
+    explicit Interpreter( ): scope_stack {}, io_controller {}, drawing_controller {} {
+        std_functions.insert( { std::string("write"), [this]() { return this->write(); } } );
+        std_functions.insert( { std::string("read"), [this]() { return this->read(); } } );
+        std_functions.insert( { std::string("forward"), [this]() { return this->forward(); } } );
+        std_functions.insert( { std::string("backward"), [this]() { return this->backward(); } } );
+        std_functions.insert( { std::string("turn"), [this]() { return this->turn(); } } );
+        std_functions.insert( { std::string("switch"), [this]() { return this->switch_(); } } );
+        std_functions.insert( { std::string("reset"), [this]() { return this->reset(); } } );
+        std_functions.insert( { std::string("circle"), [this]() { return this->circle(); } } );
+        std_functions.insert( { std::string("clear"), [this]() { return this->clear(); } } );
+    };
+
+    void interpret(Program program);
 
     void interpret(ForEachLoop * for_each_loop);
     void interpret(FunctionCall * function_call);
@@ -52,6 +85,17 @@ public:
     void evaluate(Label * label_val);
     void evaluate(NegatedMathElement * negated_math_element);
     void evaluate(NegatedLogicalElement * negated_logical_element);
+
+    void write();
+    void read();
+    void forward();
+    void backward();
+    void circle();
+    void turn();
+    void reset();
+    void clear();
+    void switch_();
+
 };
 
 

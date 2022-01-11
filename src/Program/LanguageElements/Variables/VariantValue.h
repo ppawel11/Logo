@@ -12,78 +12,8 @@ class String;
 
 class VariantValue {
 public:
+    VariantValue() = default;
     virtual ~VariantValue() = default;
-    virtual std::unique_ptr<VariantValue> operator+(VariantValue *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator+(String *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator+(Bool *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator+(Number *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator+(ListOfVariantValues *other_value) = 0;
-
-    virtual std::unique_ptr<VariantValue> operator-(VariantValue *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator-(String *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator-(Bool *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator-(Number *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator-(ListOfVariantValues *other_value) = 0;
-
-    virtual std::unique_ptr<VariantValue> operator/(VariantValue *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator/(String *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator/(Bool *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator/(Number *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator/(ListOfVariantValues *other_value) = 0;
-
-    virtual std::unique_ptr<VariantValue> operator*(VariantValue *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator*(String *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator*(Bool *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator*(Number *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator*(ListOfVariantValues *other_value) = 0;
-
-    virtual std::unique_ptr<VariantValue> operator&&(const std::unique_ptr<VariantValue> & other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator&&(Bool* other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator&&(Number *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator&&(String *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator&&(ListOfVariantValues *other_value) = 0;
-
-    virtual std::unique_ptr<VariantValue> operator||(VariantValue *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator||(String *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator||(Bool *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator||(Number *other_value) = 0;
-    virtual std::unique_ptr<VariantValue> operator||(ListOfVariantValues *other_value) = 0;
-
-    virtual std::unique_ptr<VariantValue> operator==(VariantValue * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator==(String * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator==(Bool * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator==(Number * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator==(ListOfVariantValues * other_value ) = 0;
-
-    virtual std::unique_ptr<VariantValue> operator!=(VariantValue * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator!=(String * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator!=(Bool * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator!=(Number * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator!=(ListOfVariantValues * other_value ) = 0;
-
-    virtual std::unique_ptr<VariantValue> operator<(VariantValue * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator<(String * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator<(Bool * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator<(Number * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator<(ListOfVariantValues * other_value ) = 0;
-
-    virtual std::unique_ptr<VariantValue> operator<=(VariantValue * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator<=(String * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator<=(Bool * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator<=(Number * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator<=(ListOfVariantValues * other_value ) = 0;
-
-    virtual std::unique_ptr<VariantValue> operator>(VariantValue * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator>(String * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator>(Bool * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator>(Number * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator>(ListOfVariantValues * other_value ) = 0;
-
-    virtual std::unique_ptr<VariantValue> operator>=(VariantValue * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator>=(String * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator>=(Bool * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator>=(Number * other_value ) = 0;
-    virtual std::unique_ptr<VariantValue> operator>=(ListOfVariantValues * other_value ) = 0;
 
     virtual bool to_bool() = 0;
     virtual std::string to_string() = 0;
@@ -95,8 +25,6 @@ public:
     virtual void set_value(std::vector<std::shared_ptr<VariantValue>> value_) = 0;
     virtual void set_value(std::string value_) = 0;
     virtual void set_value(VariantValue* value_) = 0;
-
-//    friend std::unique_ptr<VariantValue> operator+( const std::unique_ptr<VariantValue> & left_val, const std::unique_ptr<VariantValue> & right_val );
 };
 
 #endif //TKOM_VARIANTVALUE_H

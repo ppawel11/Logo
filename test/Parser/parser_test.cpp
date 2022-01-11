@@ -7,15 +7,22 @@
 
 class parser_test: public ::testing::Test
 {
+public:
+    std::string to_be_parsed;
 protected:
-};
+    void SetUp() override {
+        to_be_parsed =
+                "var num_1 = 4;"
+                "repeat(num_1){"
+                "   forward(100);"
+                "   turn(180);"
+                "}";
+    }
 
-std::string to_be_parsed =
-        "var num_1 = 4;"
-        "repeat(num_1){"
-        "   forward(100);"
-        "   turn(180);"
-        "}";
+    void TearDown() override {
+        // Kod uruchamiany po wykonaniu kodu testu, przed wykonaniem destruktora
+    }
+};
 
 
 TEST_F(parser_test, parser_basic_test )

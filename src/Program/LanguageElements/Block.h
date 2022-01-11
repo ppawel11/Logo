@@ -12,12 +12,7 @@ class Block: public LanguageElement {
 public:
     explicit Block( std::vector<std::unique_ptr<LanguageElement>> statements_ ): statements{std::move( statements_ )} {}
 
-    void be_handled(Interpreter * interpreter) override {
-        for( auto const & a : statements )
-        {
-            a->be_handled(interpreter);
-        }
-    }
+    void be_handled(Interpreter * interpreter) override;
 
     const std::vector<std::unique_ptr<LanguageElement>> &getStatements() const {
         return statements;
