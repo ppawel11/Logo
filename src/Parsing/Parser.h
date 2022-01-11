@@ -35,6 +35,8 @@
 #include "../Program/LanguageElements/FunctionDefinition.h"
 #include "../Program/LanguageElements/Logical/RelationType.h"
 
+#include "../Parsing/Exceptions/ParserException.h"
+
 
 
 class Parser {

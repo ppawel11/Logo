@@ -5,6 +5,7 @@
 #include "../../Source/StringStream/StringStreamSource.h"
 #include "../Token/Token.h"
 
+#include "../Exceptions/LexicalException.h"
 #include <memory>
 #include <map>
 

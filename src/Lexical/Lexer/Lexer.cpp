@@ -7,7 +7,9 @@ const Token &Lexer::getNextToken() {
     char next_char = scanner->getNextChar();
 
     while( std::isblank(next_char) )
+    {
         next_char = scanner->getNextChar();
+    }
 
     current_token_position = scanner->getCurrentPosition();
 
@@ -42,14 +44,14 @@ Token Lexer::getStringToken() {
             next_char = scanner->getNextChar();
             if( scanner->eof() )
             {
-                throw std::runtime_error("eof while scanning string");
+                throw LexicalException("eof while scanning string", current_token_position.line, current_token_position.sign);
             }
         }
 
         str.append(1, next_char);
         if( str.length() > max_string_length )
         {
-            throw std::runtime_error("string too long");
+            throw LexicalException("string too long", current_token_position.line, current_token_position.sign);
         }
 
         next_char = scanner->getNextChar();
@@ -80,7 +82,7 @@ Token Lexer::getLiteralToken() {
         literal_length++;
         if( literal_length > max_literal_length )
         {
-            throw std::runtime_error("literal too long");
+            throw LexicalException("literal too long", current_token_position.line, current_token_position.sign );
         }
         literal.append(1, scanner->getNextChar());
     }

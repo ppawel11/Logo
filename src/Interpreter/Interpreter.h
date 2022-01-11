@@ -34,6 +34,7 @@
 
 #include "IOController/IOController.h"
 #include "../GUI/DrawingController/DrawingController.h"
+#include "Exception/InterpreterException.h"
 #include <functional>
 
 typedef std::function<void()> Callback;

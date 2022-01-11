@@ -1,6 +1,14 @@
 #include "Interpreter.h"
 
 void Interpreter::interpret( Program program ) {
+    for( auto& func_def : program.func_defs )
+    {
+        if( std_functions.find( func_def.first ) != std_functions.end() )
+        {
+            throw InterpreterException("Redefinition of standard " + func_def.first + " function");
+        }
+    }
+
     scope_stack.init_global( std::move( program.func_defs ) );
 
     for( auto const & elem : program.instructions )
@@ -38,7 +46,7 @@ void Interpreter::interpret(FunctionCall *function_call) {
     const auto & func_args = function_call->getArguments().getArgs();
 
     if (func_params.size() != func_args.size() )
-        throw std::runtime_error("invalid number of arguments");
+        throw InterpreterException("invalid number of arguments");
 
     std::map<std::string, std::variant<Number, Bool, String, ListOfVariantValues>> call_init;
 
@@ -85,7 +93,6 @@ void Interpreter::interpret(RepeatLoop *repeat_loop) {
         {
             repeat_loop->getLoop()->be_handled(this);
 
-            //todo: obsłgua returna
             if( scope_stack.isReturned() )
             {
                 return;
@@ -93,7 +100,7 @@ void Interpreter::interpret(RepeatLoop *repeat_loop) {
         }
     }
     else
-        throw std::runtime_error("invalid repeat loop argument");
+        throw InterpreterException("invalid repeat loop argument");
 }
 
 void Interpreter::interpret(WhileLoop *while_loop) {
@@ -124,7 +131,7 @@ void Interpreter::interpret(VariableAssignment *variable_assignment) {
 
 void Interpreter::interpret(VariableDeclaration *variable_declaration) {
     if( scope_stack.is_symbol_defined(variable_declaration->getLabel()))
-        throw std::runtime_error("symbol defined");
+        throw InterpreterException("symbol defined");
     variable_declaration->getValue()->be_evaluated(this);
     scope_stack.set_var(variable_declaration->getLabel(), scope_stack.get_last_result().value());
 }
@@ -147,22 +154,26 @@ void Interpreter::interpret(Block *block) {
 }
 
 void Interpreter::evaluate(OrCondition *or_condition) {
-    //todo: nie ewaluować jeśli znalazł true
     const auto & expressions = or_condition->getElements();
 
     expressions[0]->be_evaluated(this);
 
     auto left_val = scope_stack.get_last_result();
 
+
     for( int i = 1; i < expressions.size(); ++i )
     {
+        if( std::visit(Caster<bool> {}, scope_stack.get_last_result().value() ) )
+        {
+            return;
+        }
+
         expressions[i]->be_evaluated(this);
         scope_stack.set_last_result( std::visit( OrExecutor {}, left_val.value(), scope_stack.get_last_result().value() ) );
     }
 }
 
 void Interpreter::evaluate(AndCondition *and_condition) {
-    // todo: nie ewaluować jeśli znalazł false
     const auto & expressions = and_condition->getEqConditions();
 
     expressions[0]->be_evaluated(this);
@@ -171,6 +182,11 @@ void Interpreter::evaluate(AndCondition *and_condition) {
 
     for( int i = 1; i < expressions.size(); ++i )
     {
+        if( !std::visit(Caster<bool> {}, scope_stack.get_last_result().value() ) )
+        {
+            return;
+        }
+
         expressions[i]->be_evaluated(this);
         scope_stack.set_last_result(  std::visit( AndExecutor {}, left_val.value(), scope_stack.get_last_result().value() ) );
     }
@@ -220,7 +236,7 @@ void Interpreter::evaluate(Comparison *comparison) {
                 scope_stack.set_last_result( std::visit( GreaterExecutor {}, left_val.value(), scope_stack.get_last_result().value() ) );
                 break;
             default:
-                throw std::runtime_error("unknown comparision type");
+                throw InterpreterException("unknown comparision type");
 
         }
     }
@@ -245,7 +261,7 @@ void Interpreter::evaluate(AdditiveExpression *additive_expression) {
                 scope_stack.set_last_result( std::visit( SubtractionExecutor {}, left_val.value(), scope_stack.get_last_result().value() ) );
                 break;
             default:
-                throw std::runtime_error("unknown addition operator");
+                throw InterpreterException("unknown addition operator");
         }
     }
 }
@@ -270,7 +286,7 @@ void Interpreter::evaluate(MultiplyExpression *multiply_expression) {
                 scope_stack.set_last_result( std::visit( DivisionExecutor {}, left_val.value(), scope_stack.get_last_result().value() ) );
                 break;
             default:
-                throw std::runtime_error("unknown multiply operator");
+                throw InterpreterException("unknown multiply operator");
         }
     }
 }

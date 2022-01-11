@@ -19,6 +19,7 @@ set(SOURCE
         src/Lexical/Token/Token.h
         src/Lexical/Lexer/Lexer.cpp
         src/Lexical/Lexer/Lexer.h
+        src/Lexical/Exceptions/LexicalException.h
         src/Source/Position.h
         src/Source/SourceInterface.h
         src/Source/StringStream/StringStreamSource.cpp
@@ -71,6 +72,7 @@ set(SOURCE
         src/Program/Program.h
         src/Parsing/Parser.cpp
         src/Parsing/Parser.h
+        src/Parsing/Exceptions/ParserException.h
         src/Interpreter/Interpreter.cpp
         src/Interpreter/Interpreter.h
         src/Interpreter/Scope.cpp
@@ -79,6 +81,7 @@ set(SOURCE
         src/Interpreter/ScopeStack.h
         src/Interpreter/CallContext.cpp
         src/Interpreter/CallContext.h
+        src/Interpreter/Exception/InterpreterException.h
         src/Program/LanguageElements/Variables/Bool.cpp
         src/Program/LanguageElements/Variables/Bool.h
         src/Program/LanguageElements/Variables/Number.cpp
