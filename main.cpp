@@ -3,6 +3,7 @@
 #include <QQmlContext>
 #include <QQuickItem>
 
+#include "../../src/GUI/DrawingController/DrawingController.h"
 #include "../../src/Source/StringStream/StringStreamSource.h"
 #include "../../src/Source/SourceInterface.h"
 #include "../../src/Lexical/Lexer/Lexer.h"
@@ -16,44 +17,49 @@
 #include "src/Interpreter/Interpreter.h"
 
 int main(int argc, char** argv) {
-//    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-//    QGuiApplication app {argc, argv};
-//    QQmlApplicationEngine engine;
-//    QObject::connect(&engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit, Qt::QueuedConnection);
-//    QObject::connect(&engine, &QQmlApplicationEngine::exit, &app, &QGuiApplication::exit, Qt::QueuedConnection);
-//
-//    engine.load(QUrl("qrc:/main.qml"));
-//    return( QGuiApplication::exec() );
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication app {argc, argv};
+    QQmlApplicationEngine engine;
+    QObject::connect(&engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit, Qt::QueuedConnection);
+    QObject::connect(&engine, &QQmlApplicationEngine::exit, &app, &QGuiApplication::exit, Qt::QueuedConnection);
 
-    std::string to_be_parsed =
-//            "func moja_funkcja(a) {"
-//            "   if( a == 5 ){"
-//            "       return a;"
-//            "   }"
-//            "   write( \"hej\" );"
-//            "   forward( a );"
-//            "   turn( 90 );"
-//            "   repeat(1) { }"
-//            "   "
-//            "   return moja_funkcja( a + 1 );"
-//            "}"
-//            ""
-//            "var b = moja_funkcja(1);"
-//            "var c = [1,2,moja_funkcja(1), \"hej\"];"
-//            ""
-//            "for( label : c )"
-//            "{"
-//            "   write(label);"
-//            "}"
-            "func write (a) {\n"
-            "   if( a == 1 )\n"
-            "   {\n"
-            "       return 1;\n"
-            "   }\n"
-            "   return a * silnia (a-1);\n"
-            "}\n"
-//            "a = (1 * (3+moja_funkcja(1)));"
-            "write( silnia(5) );\n";
+    qmlRegisterType<DrawingController>("TKOM", 1, 0, "DrawingController");
+    qmlRegisterType<Interpreter>("TKOM", 1, 0, "Interpreter");
+    qmlRegisterType<Parser>("TKOM", 1, 0, "Parser");
+    qmlRegisterType<Lexer>("TKOM", 1, 0, "Lexer");
+    qmlRegisterType<Program>("TKOM", 1, 0, "Program");
+    engine.load(QUrl("qrc:/main.qml"));
+    return( QGuiApplication::exec() );
+//
+//    std::string to_be_parsed =
+////            "func moja_funkcja(a) {"
+////            "   if( a == 5 ){"
+////            "       return a;"
+////            "   }"
+////            "   write( \"hej\" );"
+////            "   forward( a );"
+////            "   turn( 90 );"
+////            "   repeat(1) { }"
+////            "   "
+////            "   return moja_funkcja( a + 1 );"
+////            "}"
+////            ""
+////            "var b = moja_funkcja(1);"
+////            "var c = [1,2,moja_funkcja(1), \"hej\"];"
+////            ""
+////            "for( label : c )"
+////            "{"
+////            "   write(label);"
+////            "}"
+//            "func silnia (a) {\n"
+//            "   if( a == 1 )\n"
+//            "   {\n"
+//            "       return 1;\n"
+//            "   }\n"
+//            "   return a * silnia (a-1);\n"
+//            "}\n"
+////            "a = (1 * (3+moja_funkcja(1)));"
+//            "write( silnia(4) );\n";
 //            ""
 //            "turn(b);"
 //            "while( b != 0 )"
@@ -62,13 +68,13 @@ int main(int argc, char** argv) {
 //            "}"
 //            "turn(b);";
 
-    std::istringstream input(to_be_parsed);
-    SourceInterface * scanner = new StringStreamSource(input);
-    Lexer lexer = Lexer(scanner);
-    Parser parser = Parser(lexer);
-    Program program = parser.parseProgram();
-    Interpreter interpreter = Interpreter();
-    interpreter.interpret( std::move(program) );
+//    std::istringstream input(to_be_parsed);
+//    SourceInterface * scanner = new StringStreamSource(input);
+//    Lexer lexer = Lexer(scanner);
+//    Parser parser = Parser(lexer);
+//    Program program = parser.parseProgram();
+//    Interpreter interpreter = Interpreter();
+//    interpreter.interpret( std::move(program) );
 
 //    const std::string name = "num_1";
 //    const std::variant<Number, Bool, String, ListOfVariantValues> value = Number(4);

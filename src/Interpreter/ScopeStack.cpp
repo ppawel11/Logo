@@ -11,6 +11,7 @@ void ScopeStack::make_call(const std::map<std::string, std::variant<Number, Bool
 }
 
 void ScopeStack::return_call() {
+    returned = false;
     call_stack.pop();
 }
 
@@ -49,7 +50,7 @@ void ScopeStack::set_last_result(std::variant<Number, Bool, String, ListOfVarian
 }
 
 bool ScopeStack::is_symbol_defined(const std::string& name) {
-    return call_stack.top().is_symbol_declared( name );
+    return call_stack.top().is_symbol_declared( name ) || ( func_map.find( name ) != func_map.end() );
 }
 
 void ScopeStack::make_scope() {

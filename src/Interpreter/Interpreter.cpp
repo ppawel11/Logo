@@ -40,6 +40,7 @@ void Interpreter::interpret(FunctionCall *function_call) {
         std_functions[ function_call->getName() ]();
         return;
     }
+
     const auto & func_def = scope_stack.get_function(function_call->getName());
 
     auto func_params = func_def->getParameters();
@@ -59,8 +60,6 @@ void Interpreter::interpret(FunctionCall *function_call) {
     scope_stack.make_call(call_init);
 
     func_def->getBody()->be_handled(this);
-
-    scope_stack.setReturned( false );
 
     scope_stack.return_call();
 }

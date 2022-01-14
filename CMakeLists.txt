@@ -11,7 +11,7 @@ if(GUI)
     endif()
 endif()
 
-#set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOMOC ON)
 
 set(SOURCE
         src/Lexical/Token/TokenType.h
@@ -131,7 +131,10 @@ if(GUI)
     qt5_add_resources(QML_RESOURCES qrc/tkom.qrc)
     set(SOURCE ${SOURCE}
             src/GUI/DrawingController/DrawingController.cpp
-            src/GUI/DrawingController/DrawingController.h )
+            src/GUI/DrawingController/DrawingController.h
+            src/Source/TextSource/TextSource.cpp
+            src/Source/TextSource/TextSource.h
+            )
 endif()
 
 add_subdirectory(gtest)
