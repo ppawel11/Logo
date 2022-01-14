@@ -37,15 +37,23 @@
 
 #include "../Parsing/Exceptions/ParserException.h"
 
+#include <QtCore/QObject>
 
 
-class Parser {
-    Lexer lexer;
+class Parser: public QObject {
+    Q_OBJECT
+    Q_PROPERTY(Lexer * lexer MEMBER lexer WRITE set_lexer READ get_lexer NOTIFY lexer_changed );
+    Lexer * lexer;
+public:
+    Lexer *get_lexer() const;
+
+    void set_lexer(Lexer *lexer);
 
 public:
-    explicit Parser(Lexer lex): lexer{ std::move(lex) } {}
+    Parser(QObject * parent = nullptr ): QObject(parent), lexer{ nullptr } {}
 
-    Program parseProgram();
+public slots:
+    void parseProgram(Program *program);
 
 private:
     std::optional<std::unique_ptr<FunctionDefinition>> tryToParseFuncDef();
@@ -103,6 +111,10 @@ private:
     std::optional<std::unique_ptr<Assignable>> tryToParseParentCondition();
 
     std::optional<std::unique_ptr<Assignable>> tryToParseComparison();
+
+signals:
+    void lexer_changed();
+    void error(QString error);
 };
 
 

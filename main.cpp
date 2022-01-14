@@ -15,6 +15,7 @@
 #include "../../src/Program/LanguageElements/Variables/Bool.h"
 #include "../../src/Program/LanguageElements/Variables/Number.h"
 #include "src/Interpreter/Interpreter.h"
+#include "src/Source/TextSource/TextSource.h"
 
 int main(int argc, char** argv) {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -28,29 +29,31 @@ int main(int argc, char** argv) {
     qmlRegisterType<Parser>("TKOM", 1, 0, "Parser");
     qmlRegisterType<Lexer>("TKOM", 1, 0, "Lexer");
     qmlRegisterType<Program>("TKOM", 1, 0, "Program");
+    qmlRegisterType<TextSource>("TKOM", 1, 0, "TextSource");
+    qmlRegisterUncreatableType<SourceInterface>("TKOM", 1, 0, "SourceInterface", "error: source interface");
     engine.load(QUrl("qrc:/main.qml"));
     return( QGuiApplication::exec() );
 //
 //    std::string to_be_parsed =
-////            "func moja_funkcja(a) {"
-////            "   if( a == 5 ){"
-////            "       return a;"
-////            "   }"
-////            "   write( \"hej\" );"
-////            "   forward( a );"
-////            "   turn( 90 );"
-////            "   repeat(1) { }"
-////            "   "
-////            "   return moja_funkcja( a + 1 );"
-////            "}"
-////            ""
-////            "var b = moja_funkcja(1);"
-////            "var c = [1,2,moja_funkcja(1), \"hej\"];"
-////            ""
-////            "for( label : c )"
-////            "{"
-////            "   write(label);"
-////            "}"
+//////            "func moja_funkcja(a) {"
+//////            "   if( a == 5 ){"
+//////            "       return a;"
+//////            "   }"
+//////            "   write( \"hej\" );"
+//////            "   forward( a );"
+//////            "   turn( 90 );"
+//////            "   repeat(1) { }"
+//////            "   "
+//////            "   return moja_funkcja( a + 1 );"
+//////            "}"
+//////            ""
+//////            "var b = moja_funkcja(1);"
+//////            "var c = [1,2,moja_funkcja(1), \"hej\"];"
+//////            ""
+//////            "for( label : c )"
+//////            "{"
+//////            "   write(label);"
+//////            "}"
 //            "func silnia (a) {\n"
 //            "   if( a == 1 )\n"
 //            "   {\n"
@@ -60,21 +63,25 @@ int main(int argc, char** argv) {
 //            "}\n"
 ////            "a = (1 * (3+moja_funkcja(1)));"
 //            "write( silnia(4) );\n";
-//            ""
-//            "turn(b);"
-//            "while( b != 0 )"
-//            "{"
-//            "   b = b - 1;"
-//            "}"
-//            "turn(b);";
-
+//   //        ""
+//   //        "turn(b);"
+//   //        "while( b != 0 )"
+//   //        "{"
+//   //        "   b = b - 1;"
+//   //        "}"
+//   //        "turn(b);";
+//    QString qstring = "aaaa";
+//    auto a = std::make_unique<std::istringstream>(qstring.toStdString());
 //    std::istringstream input(to_be_parsed);
 //    SourceInterface * scanner = new StringStreamSource(input);
 //    Lexer lexer = Lexer(scanner);
-//    Parser parser = Parser(lexer);
-//    Program program = parser.parseProgram();
+////    Parser parser = Parser(lexer);
+//    Parser parser = Parser();
+//    parser.set_lexer( &lexer );
+//    Program program = Program();
+//    parser.parseProgram(program);
 //    Interpreter interpreter = Interpreter();
-//    interpreter.interpret( std::move(program) );
+//    interpreter.interpret( program );
 
 //    const std::string name = "num_1";
 //    const std::variant<Number, Bool, String, ListOfVariantValues> value = Number(4);

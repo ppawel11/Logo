@@ -28,6 +28,31 @@ ApplicationWindow{
 
     }
 
+    TKOM.Interpreter {
+        id: interpreter
+        drawing_controller: drawing_controller
+
+        onError: errors.text = error;
+    }
+
+    TKOM.Lexer {
+        id: lexer
+    }
+
+    TKOM.Parser {
+        id: parser
+
+        onError: errors.text = error;
+    }
+
+    TKOM.TextSource {
+        id: text_source
+    }
+
+    TKOM.Program {
+        id: program
+    }
+
     ColumnLayout {
         anchors.fill: parent
 
@@ -114,6 +139,21 @@ ApplicationWindow{
 
             }
         }
+        ScrollView {
+            id: scrollView_errors
+            Layout.fillWidth: true
+            Layout.maximumHeight: 30
+            Layout.minimumHeight: 30
+
+            TextArea{
+                id: errors
+                color: text == qsTr("") ? "green" : "red"
+                implicitHeight: 30
+                placeholderText: "Flawless"
+
+            }
+        }
+
 
 
         Button {
@@ -123,75 +163,88 @@ ApplicationWindow{
             text: qsTr("run")
 
             onClicked: {
+                errors.text = qsTr("");
+
+                text_source.code = code.text;
+
+                lexer.source = text_source;
+
+                parser.lexer = lexer;
+
+                parser.parseProgram( program );
+
+                if( program.valid ) {
+                    interpreter.interpret( program );
+                }
 
             }
         }
 
-        Button {
-            height: 100
-            Layout.fillWidth: true
-            id: line
-            text: qsTr("line")
+     //Button {
+     //    height: 100
+     //    Layout.fillWidth: true
+     //    id: line
+     //    text: qsTr("line")
 
-            onClicked: {
-                drawing_controller.draw_line(100);
-            }
-        }
+     //    onClicked: {
+     //        drawing_controller.draw_line(100);
+     //    }
+     //}
 
-        Button {
-            height: 100
-            Layout.fillWidth: true
-            id: reset_
-            text: qsTr("reset")
+     //Button {
+     //    height: 100
+     //    Layout.fillWidth: true
+     //    id: reset_
+     //    text: qsTr("reset")
 
-            onClicked: {
-                drawing_controller.reset();
-            }
-        }
+     //    onClicked: {
+     //        drawing_controller.reset();
+     //    }
+     //}
 
-        Button {
-            height: 100
-            Layout.fillWidth: true
-            id: switch_
-            text: qsTr("switch")
+     //Button {
+     //    height: 100
+     //    Layout.fillWidth: true
+     //    id: switch_
+     //    text: qsTr("switch")
 
-            onClicked: {
-                drawing_controller.switch_mode();
-            }
-        }
+     //    onClicked: {
+     //        drawing_controller.switch_mode();
+     //    }
+     //}
 
-        Button {
-            height: 100
-            Layout.fillWidth: true
-            id: clear_
-            text: qsTr("clear")
+     //Button {
+     //    height: 100
+     //    Layout.fillWidth: true
+     //    id: clear_
+     //    text: qsTr("clear")
 
-            onClicked: {
-                drawing_controller.clear();
-            }
-        }
+     //    onClicked: {
+     //        drawing_controller.clear();
+     //    }
+     //}
 
-        Button {
-            height: 100
-            Layout.fillWidth: true
-            id: circle_
-            text: qsTr("circle")
+     //Button {
+     //    height: 100
+     //    Layout.fillWidth: true
+     //    id: circle_
+     //    text: qsTr("circle")
 
-            onClicked: {
-                drawing_controller.draw_circle( 100 );
-            }
-        }
+     //    onClicked: {
+     //        drawing_controller.draw_circle( 100 );
+     //    }
+     //}
 
-        Button {
-            height: 100
-            Layout.fillWidth: true
-            id: aa_
-            text: qsTr("print kod")
+     //Button {
+     //    height: 100
+     //    Layout.fillWidth: true
+     //    id: aa_
+     //    text: qsTr("print kod")
 
-            onClicked: {
-                console.log(code.text);
-            }
-        }
+     //    onClicked: {
+     //        console.log(code.text);
+     //    }
+     //}
     }
 
 }

@@ -9,7 +9,12 @@
 #include <memory>
 #include <map>
 
-class Lexer {
+#include <QtCore/QObject>
+
+class Lexer: public QObject {
+    Q_OBJECT
+
+    Q_PROPERTY(SourceInterface * source MEMBER scanner WRITE set_source READ get_source NOTIFY source_changed );
     SourceInterface * scanner;
     Token current_token;
     Position current_token_position;
@@ -78,13 +83,19 @@ public:
 
     void setMaxStringLength(int maxStringLength);
 
-    void setScanner(SourceInterface * _scanner);
+    void set_source(SourceInterface * _scanner);
+
+    SourceInterface *get_source() const;
 
 private:
     Token getStringToken();
     Token getNumericToken();
     Token getLiteralToken();
     Token getComparisionToken();
+
+    signals:
+    void source_changed();
+    void error(QString error);
 };
 
 #endif //TKOM_LEXER_H

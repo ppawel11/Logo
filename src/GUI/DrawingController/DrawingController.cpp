@@ -3,7 +3,6 @@
 void DrawingController::draw_line(int length) {
     std::cout<< std::setprecision(5) << "drawing line with length: " << length << std::endl;
     emit drawLine_( length );
-    turn( 90 );
 }
 
 void DrawingController::draw_circle( int radius ) {
@@ -13,6 +12,7 @@ void DrawingController::draw_circle( int radius ) {
 
 void DrawingController::reset() {
     std::cout<<"reseting marker position"<<std::endl;
+    angle = 0.0;
     emit reset_();
 }
 

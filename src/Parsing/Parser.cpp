@@ -2,30 +2,47 @@
 
 
 
-Program Parser::parseProgram() {
-    std::vector<std::unique_ptr<LanguageElement>> statements;
-    std::map<std::string, std::unique_ptr<FunctionDefinition>> func_definitions;
+void Parser::parseProgram(Program *program) {
+    //std::vector<std::unique_ptr<LanguageElement>> statements;
+    //std::map<std::string, std::unique_ptr<FunctionDefinition>> func_definitions;
+    try {
+        std::optional<std::unique_ptr<LanguageElement>> lang_element;
+        std::optional<std::unique_ptr<FunctionDefinition>> func_definition;
 
-    std::optional<std::unique_ptr<LanguageElement>> lang_element;
-    std::optional<std::unique_ptr<FunctionDefinition>> func_definition;
+        lexer->getNextToken();
 
-    lexer.getNextToken();
-    while(
-            (lang_element = tryToParseLanguageElement()) ||
-            (func_definition = tryToParseFuncDef())
-         )
-    {
-        if( lang_element )
+        if( program == nullptr )
         {
-            statements.push_back(std::move(lang_element.value()));
+            throw ParserException("Program undefined", 0, 0);
         }
-        else
+
+        program->clear();
+
+        while(
+                (lang_element = tryToParseLanguageElement()) ||
+                (func_definition = tryToParseFuncDef())
+                )
         {
-            func_definitions[func_definition.value()->getName()] = std::move(func_definition.value());
+            if( lang_element )
+            {
+                program->instructions.push_back(std::move(lang_element.value()));
+            }
+            else
+            {
+                program->func_defs[func_definition.value()->getName()] = std::move(func_definition.value());
+            }
         }
+
+        program->set_valid( true );
+    } catch ( LexicalException & e ) {
+        emit error( QString::fromStdString( "Lexer: " + std::string( e.what() ) ) );
+        program->set_valid( false );
+    } catch ( ParserException & e ) {
+        program->set_valid( false );
+        emit error( QString::fromStdString("Parser: " + std::string( e.what() ) ) );
     }
 
-    return Program( std::move(statements), std::move(func_definitions) );
+    //return Program( std::move(statements), std::move(func_definitions) );
 }
 
 std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseLanguageElement() {
@@ -48,11 +65,11 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseSemicolonEnded
        (statement = tryToParseVarAssignmentOrFuncCall()) ||
        (statement = tryToParseReturn() ))
     {
-        if( lexer.getCurrentToken().getType() != TokenType::SEMICOLON )
+        if( lexer->getCurrentToken().getType() != TokenType::SEMICOLON )
         {
-            throw ParserException("expected semicolon", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("expected semicolon", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
-        lexer.getNextToken();
+        lexer->getNextToken();
         return statement;
     }
 
@@ -60,50 +77,50 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseSemicolonEnded
 }
 
 std::optional<std::unique_ptr<FunctionDefinition>> Parser::tryToParseFuncDef() {
-    if( lexer.getCurrentToken().getType() == TokenType::FUNC )
+    if( lexer->getCurrentToken().getType() == TokenType::FUNC )
     {
-        if( lexer.getNextToken().getType() != TokenType::LABEL )
+        if( lexer->getNextToken().getType() != TokenType::LABEL )
         {
-            throw ParserException("func def missing label", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("func def missing label", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        std::string func_name = lexer.getCurrentToken().getLiteralValue();
+        std::string func_name = lexer->getCurrentToken().getLiteralValue();
 
-        if( lexer.getNextToken().getType() != TokenType::PARENTHESIS_OPEN )
+        if( lexer->getNextToken().getType() != TokenType::PARENTHESIS_OPEN )
         {
-            throw ParserException("func def missing arguments", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("func def missing arguments", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
         std::vector<std::string> parameters;
 
-        if( lexer.getNextToken().getType() == TokenType::LABEL )
+        if( lexer->getNextToken().getType() == TokenType::LABEL )
         {
-            parameters.push_back( lexer.getCurrentToken().getLiteralValue() );
-            while( lexer.getNextToken().getType() == TokenType::COMMA )
+            parameters.push_back( lexer->getCurrentToken().getLiteralValue() );
+            while( lexer->getNextToken().getType() == TokenType::COMMA )
             {
-                if( lexer.getNextToken().getType() == TokenType::LABEL )
+                if( lexer->getNextToken().getType() == TokenType::LABEL )
                 {
-                    parameters.push_back(lexer.getCurrentToken().getLiteralValue());
+                    parameters.push_back(lexer->getCurrentToken().getLiteralValue());
                 }
                 else
                 {
-                    throw ParserException("func def invalid arguments", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+                    throw ParserException("func def invalid arguments", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
                 }
             }
         }
 
-        if( lexer.getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
+        if( lexer->getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
         {
-            throw ParserException("func def expected parenthesis close", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("func def expected parenthesis close", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         std::optional<std::unique_ptr<LanguageElement>> func_body = tryToParseBlock();
 
         if ( !(func_body) )
         {
-            throw ParserException("func def missing body", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("func def missing body", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
         return std::make_unique<FunctionDefinition>(func_name, parameters, std::move(func_body.value()));
@@ -113,9 +130,9 @@ std::optional<std::unique_ptr<FunctionDefinition>> Parser::tryToParseFuncDef() {
 }
 
 std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseBlock() {
-    if (lexer.getCurrentToken().getType() == TokenType::CURLY_BRACKET_OPEN)
+    if (lexer->getCurrentToken().getType() == TokenType::CURLY_BRACKET_OPEN)
     {
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         std::optional<std::unique_ptr<LanguageElement>> statement;
         std::vector<std::unique_ptr<LanguageElement>> statement_vec;
@@ -124,11 +141,11 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseBlock() {
             statement_vec.push_back( std::move(  statement.value() ) );
         }
 
-        if (lexer.getCurrentToken().getType() != TokenType::CURLY_BRACKET_CLOSE )
+        if (lexer->getCurrentToken().getType() != TokenType::CURLY_BRACKET_CLOSE )
         {
-            throw ParserException("block missing curly bracket close", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("block missing curly bracket close", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         return std::make_unique<Block>( std::move(statement_vec) );
     }
@@ -136,38 +153,38 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseBlock() {
 }
 
 std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseIf() {
-    if( lexer.getCurrentToken().getType() == TokenType::IF )
+    if( lexer->getCurrentToken().getType() == TokenType::IF )
     {
         std::optional<std::unique_ptr<Assignable>> condition;
 
-        if( lexer.getNextToken().getType() != TokenType::PARENTHESIS_OPEN )
+        if( lexer->getNextToken().getType() != TokenType::PARENTHESIS_OPEN )
         {
-            throw ParserException("if expected parenthesis open", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("if expected parenthesis open", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         if(!(condition = tryToParseOrCondition()) ||
-            lexer.getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
+            lexer->getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
         {
-            throw ParserException("if expected parenthesis close", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("if expected parenthesis close", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         std::optional<std::unique_ptr<LanguageElement>> if_statement;
         std::optional<std::unique_ptr<LanguageElement>> else_statement = std::nullopt;
 
         if( !(if_statement = tryToParseBlock()) )
         {
-            throw ParserException("if missing block", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("if missing block", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        if( lexer.getCurrentToken().getType() == TokenType::ELSE )
+        if( lexer->getCurrentToken().getType() == TokenType::ELSE )
         {
             if( !(else_statement = tryToParseBlock()) )
             {
-                throw ParserException("else missing block", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+                throw ParserException("else missing block", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
             }
             return std::make_unique<If>(std::move(condition.value()), std::move(if_statement.value()), std::move(else_statement.value()));
         }
@@ -192,27 +209,27 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseLoop() {
 }
 
 std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseVarDeclaration() {
-    if( lexer.getCurrentToken().getType() == TokenType::VAR )
+    if( lexer->getCurrentToken().getType() == TokenType::VAR )
     {
-        if( lexer.getNextToken().getType() != TokenType::LABEL )
+        if( lexer->getNextToken().getType() != TokenType::LABEL )
         {
-            throw ParserException("var declaration missing label", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("var declaration missing label", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        std::string var_name = lexer.getCurrentToken().getLiteralValue();
+        std::string var_name = lexer->getCurrentToken().getLiteralValue();
 
-        if( lexer.getNextToken().getType() != TokenType::ASSIGN )
+        if( lexer->getNextToken().getType() != TokenType::ASSIGN )
         {
-            throw ParserException("var declaration expected assign", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("var declaration expected assign", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         std::optional<std::unique_ptr<Assignable>> value = tryToParseAssignable();
 
         if( !value )
         {
-            throw ParserException("var declaration expected assignable", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("var declaration expected assignable", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
         return std::make_unique<VariableDeclaration>( var_name, std::move(value.value()) );
@@ -221,12 +238,12 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseVarDeclaration
 }
 
 std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseVarAssignmentOrFuncCall() {
-    if( lexer.getCurrentToken().getType() == TokenType::LABEL )
+    if( lexer->getCurrentToken().getType() == TokenType::LABEL )
     {
         std::optional<std::unique_ptr<LanguageElement>> label_started;
-        std::string label = lexer.getCurrentToken().getLiteralValue();
+        std::string label = lexer->getCurrentToken().getLiteralValue();
 
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         if((label_started = tryToParseVarAssignment(label)) ||
            (label_started = tryToParseFuncCall<LanguageElement>(label)) )
@@ -239,15 +256,15 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseVarAssignmentO
 }
 
 std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseVarAssignment(const std::string& label) {
-    if( lexer.getCurrentToken().getType() == TokenType::ASSIGN )
+    if( lexer->getCurrentToken().getType() == TokenType::ASSIGN )
     {
         std::optional<std::unique_ptr<Assignable>> assignable;
 
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         if(!(assignable = tryToParseAssignable()))
         {
-            throw ParserException("var assignment expected assignable", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("var assignment expected assignable", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
         return std::make_unique<VariableAssignment>(label, std::move(assignable.value()) );
@@ -257,18 +274,18 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseVarAssignment(
 }
 
 template<typename T> std::optional<std::unique_ptr<T>> Parser::tryToParseFuncCall(const std::string& label) {
-    if( lexer.getCurrentToken().getType() == TokenType::PARENTHESIS_OPEN )
+    if( lexer->getCurrentToken().getType() == TokenType::PARENTHESIS_OPEN )
     {
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         std::optional<Arguments> arguments = tryToParseArguments();
 
-        if( lexer.getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
+        if( lexer->getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
         {
-            throw ParserException("func call missing parenthesis close", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("func call missing parenthesis close", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         if( arguments )
             return std::make_unique<FunctionCall>(label, std::move(arguments.value()));
@@ -280,30 +297,30 @@ template<typename T> std::optional<std::unique_ptr<T>> Parser::tryToParseFuncCal
 }
 
 std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseWhileLoop() {
-    if( lexer.getCurrentToken().getType() == TokenType::WHILE )
+    if( lexer->getCurrentToken().getType() == TokenType::WHILE )
     {
         std::optional<std::unique_ptr<Assignable>> condition;
 
-        if( lexer.getNextToken().getType() != TokenType::PARENTHESIS_OPEN )
+        if( lexer->getNextToken().getType() != TokenType::PARENTHESIS_OPEN )
         {
-            throw ParserException("while expected parenthesis open", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("while expected parenthesis open", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         if(!(condition = tryToParseOrCondition()) ||
-            lexer.getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
+            lexer->getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
         {
-            throw ParserException("while expected parenthesis close", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("while expected parenthesis close", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         std::optional<std::unique_ptr<LanguageElement>> while_block;
 
         if( !(while_block = tryToParseBlock()) )
         {
-            throw ParserException("while missing block", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("while missing block", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
         return std::make_unique<WhileLoop>(std::move(condition.value()), std::move(while_block.value()));
@@ -313,45 +330,45 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseWhileLoop() {
 }
 
 std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseForEachLoop() {
-    if( lexer.getCurrentToken().getType() == TokenType::FOR )
+    if( lexer->getCurrentToken().getType() == TokenType::FOR )
     {
         std::string element_label;
         std::string container_label;
         std::optional<std::unique_ptr<Assignable>> container;
 
-        if( lexer.getNextToken().getType() != TokenType::PARENTHESIS_OPEN ||
-            lexer.getNextToken().getType() != TokenType::LABEL)
+        if( lexer->getNextToken().getType() != TokenType::PARENTHESIS_OPEN ||
+            lexer->getNextToken().getType() != TokenType::LABEL)
         {
-            throw ParserException("for expected condition", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("for expected condition", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        element_label = lexer.getCurrentToken().getLiteralValue();
+        element_label = lexer->getCurrentToken().getLiteralValue();
 
-        if( lexer.getNextToken().getType() != TokenType::COLON )
+        if( lexer->getNextToken().getType() != TokenType::COLON )
         {
-            throw ParserException("for expected colon", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("for expected colon", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         container = tryToParseAssignable();
         if( container == std::nullopt )
         {
-            throw ParserException("for expected assignable", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("for expected assignable", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        if( lexer.getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
+        if( lexer->getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
         {
-            throw ParserException("for expected parenthesis close", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("for expected parenthesis close", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         std::optional<std::unique_ptr<LanguageElement>> for_statements;
 
         if( !(for_statements = tryToParseBlock()) )
         {
-            throw ParserException("for missing block", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("for missing block", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
         return std::make_unique<ForEachLoop>(element_label, std::move(container.value()), std::move(for_statements.value()));
@@ -361,30 +378,30 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseForEachLoop() 
 }
 
 std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseRepeatLoop() {
-    if( lexer.getCurrentToken().getType() == TokenType::REPEAT )
+    if( lexer->getCurrentToken().getType() == TokenType::REPEAT )
     {
         std::optional<std::unique_ptr<Assignable>> number_of_repeats;
 
-        if( lexer.getNextToken().getType() != TokenType::PARENTHESIS_OPEN )
+        if( lexer->getNextToken().getType() != TokenType::PARENTHESIS_OPEN )
         {
-            throw ParserException("repeat expected parenthesis open", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("repeat expected parenthesis open", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         if(!(number_of_repeats = tryToParseAdditiveExpression()) ||
-            lexer.getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
+            lexer->getCurrentToken().getType() != TokenType::PARENTHESIS_CLOSE )
         {
-            throw ParserException("repeat expected parenthesis close", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("repeat expected parenthesis close", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         std::optional<std::unique_ptr<LanguageElement>> repeat_statements;
 
         if( !(repeat_statements = tryToParseBlock()) )
         {
-            throw ParserException("repeat missing block", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("repeat missing block", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
 
         return std::make_unique<RepeatLoop>(std::move(number_of_repeats.value()), std::move(repeat_statements.value()));
@@ -394,14 +411,14 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseRepeatLoop() {
 }
 
 std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseReturn() {
-    if( lexer.getCurrentToken().getType() == TokenType::RETURN )
+    if( lexer->getCurrentToken().getType() == TokenType::RETURN )
     {
         std::optional<std::unique_ptr<LanguageElement>> return_statement;
-        lexer.getNextToken();
+        lexer->getNextToken();
         std::optional<std::unique_ptr<Assignable>> return_value = tryToParseAssignable();
         if( !return_value )
         {
-            throw ParserException("return expected assignable", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+            throw ParserException("return expected assignable", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
         }
         return std::make_unique<Return>(std::move(return_value.value()));
     }
@@ -430,10 +447,10 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseAdditiveExpression(
 
         expressions.push_back( std::move(multiply_expression.value()) );
 
-        while( lexer.getCurrentToken().getType() == TokenType::PLUS ||
-               lexer.getCurrentToken().getType() == TokenType:: MINUS )
+        while( lexer->getCurrentToken().getType() == TokenType::PLUS ||
+               lexer->getCurrentToken().getType() == TokenType:: MINUS )
         {
-            if( lexer.getCurrentToken().getType() == TokenType::PLUS )
+            if( lexer->getCurrentToken().getType() == TokenType::PLUS )
             {
                 operators.emplace_back(OperationType::SUM);
             }
@@ -442,11 +459,11 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseAdditiveExpression(
                 operators.emplace_back(OperationType::SUBSTRACTION);
             }
 
-            lexer.getNextToken();
+            lexer->getNextToken();
 
             if( !(multiply_expression = tryToParseMultiplyExpression()) )
             {
-                throw ParserException("expected multiply expression in additive expression", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+                throw ParserException("expected multiply expression in additive expression", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
             }
 
             expressions.push_back( std::move(multiply_expression.value()) );
@@ -467,10 +484,10 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseMultiplyExpression(
 
         elements.push_back( std::move(math_element.value()) );
 
-        while( lexer.getCurrentToken().getType() == TokenType::MULTIPLY ||
-               lexer.getCurrentToken().getType() == TokenType::DIVIDE )
+        while( lexer->getCurrentToken().getType() == TokenType::MULTIPLY ||
+               lexer->getCurrentToken().getType() == TokenType::DIVIDE )
         {
-            if( lexer.getCurrentToken().getType() == TokenType::MULTIPLY )
+            if( lexer->getCurrentToken().getType() == TokenType::MULTIPLY )
             {
                 operators.emplace_back(OperationType::MULTIPLY );
             }
@@ -479,11 +496,11 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseMultiplyExpression(
                 operators.emplace_back(OperationType::DIVIDE );
             }
 
-            lexer.getNextToken();
+            lexer->getNextToken();
 
             if( !(math_element = tryToParseMathElement()) )
             {
-                throw ParserException("expected math element in multiply expression", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+                throw ParserException("expected math element in multiply expression", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
             }
 
             elements.push_back( std::move(math_element.value()) );
@@ -499,22 +516,22 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseMathElement() {
     bool is_negated = false;
     std::unique_ptr<Assignable> result = nullptr;
 
-    if( lexer.getCurrentToken().getType() == TokenType::MINUS )
+    if( lexer->getCurrentToken().getType() == TokenType::MINUS )
     {
         is_negated = true;
-        lexer.getNextToken();
+        lexer->getNextToken();
     }
 
-    if( lexer.getCurrentToken().getType() == TokenType::NUMBER )
+    if( lexer->getCurrentToken().getType() == TokenType::NUMBER )
     {
-        result = std::make_unique<Number>(lexer.getCurrentToken().getNumericValue());
-        lexer.getNextToken();
+        result = std::make_unique<Number>(lexer->getCurrentToken().getNumericValue());
+        lexer->getNextToken();
     }
-    else if ( lexer.getCurrentToken().getType() == TokenType::LABEL )
+    else if ( lexer->getCurrentToken().getType() == TokenType::LABEL )
     {
-        std::string label = lexer.getCurrentToken().getLiteralValue();
+        std::string label = lexer->getCurrentToken().getLiteralValue();
 
-        lexer.getNextToken();
+        lexer->getNextToken();
 
         if( std::optional<std::unique_ptr<Assignable>> func_call = tryToParseFuncCall<Assignable>(label)) {
             result = std::move(func_call.value());
@@ -541,29 +558,29 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseMathElement() {
 }
 
 std::optional<std::unique_ptr<Assignable>> Parser::tryToParseList() {
-    if ( lexer.getCurrentToken().getType() == TokenType::BRACKET_OPEN )
+    if ( lexer->getCurrentToken().getType() == TokenType::BRACKET_OPEN )
     {
         std::vector<std::unique_ptr<Assignable>> elements;
-        lexer.getNextToken();
+        lexer->getNextToken();
         if( std::optional<std::unique_ptr<Assignable>> elem = tryToParseAssignable() )
         {
             elements.push_back( std::move(elem.value()));
-            while( lexer.getCurrentToken().getType() == TokenType::COMMA )
+            while( lexer->getCurrentToken().getType() == TokenType::COMMA )
             {
-                lexer.getNextToken();
+                lexer->getNextToken();
                 if( (elem = tryToParseAssignable()) )
                 {
                     elements.push_back(std::move(elem.value()));
                 }
                 else
                 {
-                    throw ParserException("list assignable expected", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+                    throw ParserException("list assignable expected", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
                 }
             }
 
-            if( lexer.getCurrentToken().getType() != TokenType::BRACKET_CLOSE )
-                throw ParserException("list expected bracket close", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
-            lexer.getNextToken();
+            if( lexer->getCurrentToken().getType() != TokenType::BRACKET_CLOSE )
+                throw ParserException("list expected bracket close", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
+            lexer->getNextToken();
             return std::make_unique<ListOfAssignable>( std::move(elements) );
         }
     }
@@ -575,16 +592,16 @@ std::optional<Arguments> Parser::tryToParseArguments() {
     {
         std::vector<std::unique_ptr<Assignable>> args;
         args.push_back(std::move(arg.value()));
-        while( lexer.getCurrentToken().getType() == TokenType::COMMA )
+        while( lexer->getCurrentToken().getType() == TokenType::COMMA )
         {
-            lexer.getNextToken();
+            lexer->getNextToken();
             if( (arg = tryToParseAssignable()) )
             {
                 args.push_back(std::move(arg.value()));
             }
             else
             {
-                throw ParserException("arguments expected assignable", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+                throw ParserException("arguments expected assignable", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
             }
         }
         return Arguments( std::move(args) );
@@ -593,29 +610,29 @@ std::optional<Arguments> Parser::tryToParseArguments() {
 }
 
 std::optional<std::unique_ptr<Assignable>> Parser::tryToParseParentExpression() {
-    if( lexer.getCurrentToken().getType() == TokenType::PARENTHESIS_OPEN )
+    if( lexer->getCurrentToken().getType() == TokenType::PARENTHESIS_OPEN )
     {
-        lexer.getNextToken();
+        lexer->getNextToken();
 //        if ( std::optional<std::unique_ptr<Assignable>> expr = tryToParseAdditiveExpression() )
         if ( std::optional<std::unique_ptr<Assignable>> expr = tryToParseOrCondition() )
         {
-            if ( lexer.getCurrentToken().getType() == TokenType::PARENTHESIS_CLOSE )
+            if ( lexer->getCurrentToken().getType() == TokenType::PARENTHESIS_CLOSE )
             {
-                lexer.getNextToken();
+                lexer->getNextToken();
                 return expr;
             }
         }
 
-        throw ParserException("invalid parent expression", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+        throw ParserException("invalid parent expression", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
     }
     return std::nullopt;
 }
 
 std::optional<std::unique_ptr<Assignable>> Parser::tryToParseString() {
-    if( lexer.getCurrentToken().getType() == TokenType::STRING )
+    if( lexer->getCurrentToken().getType() == TokenType::STRING )
     {
-        auto str = std::make_unique<String>( lexer.getCurrentToken().getLiteralValue() );
-        lexer.getNextToken();
+        auto str = std::make_unique<String>( lexer->getCurrentToken().getLiteralValue() );
+        lexer->getNextToken();
         return str;
     }
     return std::nullopt;
@@ -629,17 +646,17 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseOrCondition() {
 
         conditions.push_back( std::move(condition.value()) );
 
-        while( lexer.getCurrentToken().getType() == TokenType::OR_SYMBOLIC ||
-               lexer.getCurrentToken().getType() == TokenType::OR )
+        while( lexer->getCurrentToken().getType() == TokenType::OR_SYMBOLIC ||
+               lexer->getCurrentToken().getType() == TokenType::OR )
         {
-            lexer.getNextToken();
+            lexer->getNextToken();
             if( (condition = tryToParseAndCondition()) )
             {
                 conditions.push_back( std::move(condition.value()) );
             }
             else
             {
-                throw ParserException("or condition expected and condition", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+                throw ParserException("or condition expected and condition", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
             }
         }
 
@@ -656,17 +673,17 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseAndCondition() {
 
         conditions.push_back( std::move(condition.value()) );
 
-        while( lexer.getCurrentToken().getType() == TokenType::AND_SYMBOLIC ||
-               lexer.getCurrentToken().getType() == TokenType::AND )
+        while( lexer->getCurrentToken().getType() == TokenType::AND_SYMBOLIC ||
+               lexer->getCurrentToken().getType() == TokenType::AND )
         {
-            lexer.getNextToken();
+            lexer->getNextToken();
             if( (condition = tryToParseEqualityCondition()) )
             {
                 conditions.push_back( std::move(condition.value()) );
             }
             else
             {
-                throw ParserException("and condition expected equality condition", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+                throw ParserException("and condition expected equality condition", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
             }
         }
         return std::make_unique<AndCondition>( std::move(conditions) );
@@ -679,12 +696,12 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseEqualityCondition()
     if( std::optional<std::unique_ptr<Assignable>> first_condition = tryToParseRelationalCondition() )
     {
 
-        if( lexer.getCurrentToken().getType() == TokenType::EQUAL ||
-            lexer.getCurrentToken().getType() == TokenType::NOT_EQUAL )
+        if( lexer->getCurrentToken().getType() == TokenType::EQUAL ||
+            lexer->getCurrentToken().getType() == TokenType::NOT_EQUAL )
         {
-            bool equals = lexer.getCurrentToken().getType() == TokenType::EQUAL;
+            bool equals = lexer->getCurrentToken().getType() == TokenType::EQUAL;
 
-            lexer.getNextToken();
+            lexer->getNextToken();
 
             if( std::optional<std::unique_ptr<Assignable>> second_condition = tryToParseRelationalCondition() )
             {
@@ -696,7 +713,7 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseEqualityCondition()
             }
             else
             {
-                throw ParserException("equality condition expected relational condition", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+                throw ParserException("equality condition expected relational condition", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
             }
         }
 
@@ -709,20 +726,20 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseRelationalCondition
     bool is_negated = false;
     std::optional<std::unique_ptr<Assignable>> result = std::nullopt;
 
-    if( lexer.getCurrentToken().getType() == TokenType::NEGATION )
+    if( lexer->getCurrentToken().getType() == TokenType::NEGATION )
     {
         is_negated = true;
-        lexer.getNextToken();
+        lexer->getNextToken();
     }
 
-    if( lexer.getCurrentToken().getType() == TokenType::FALSE )
+    if( lexer->getCurrentToken().getType() == TokenType::FALSE )
     {
-        lexer.getNextToken();
+        lexer->getNextToken();
         result = std::make_unique<Bool>(false);
     }
-    else if ( lexer.getCurrentToken().getType() == TokenType::TRUE )
+    else if ( lexer->getCurrentToken().getType() == TokenType::TRUE )
     {
-        lexer.getNextToken();
+        lexer->getNextToken();
         result = std::make_unique<Bool>( true);
     }
     else if ( std::optional<std::unique_ptr<Assignable>> comparison = tryToParseComparison() )
@@ -742,18 +759,18 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseRelationalCondition
 }
 
 std::optional<std::unique_ptr<Assignable>> Parser::tryToParseParentCondition() {
-    if( lexer.getCurrentToken().getType() == TokenType::PARENTHESIS_OPEN )
+    if( lexer->getCurrentToken().getType() == TokenType::PARENTHESIS_OPEN )
     {
-        lexer.getNextToken();
+        lexer->getNextToken();
         if ( std::optional<std::unique_ptr<Assignable>> cond = tryToParseOrCondition() )
         {
-            if ( lexer.getCurrentToken().getType() == TokenType::PARENTHESIS_CLOSE )
+            if ( lexer->getCurrentToken().getType() == TokenType::PARENTHESIS_CLOSE )
             {
-                lexer.getNextToken();
+                lexer->getNextToken();
                 return cond;
             }
         }
-        throw ParserException("parent condition invalid", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+        throw ParserException("parent condition invalid", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
     }
     return std::nullopt;
 }
@@ -761,23 +778,23 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseParentCondition() {
 std::optional<std::unique_ptr<Assignable>> Parser::tryToParseComparison() {
     if( std::optional<std::unique_ptr<Assignable>> first_element = tryToParseAdditiveExpression() )
     {
-        if( lexer.getCurrentToken().getType() == TokenType::LOWER_OR_EQUAL ||
-            lexer.getCurrentToken().getType() == TokenType::LOWER ||
-            lexer.getCurrentToken().getType() == TokenType::GREATER ||
-            lexer.getCurrentToken().getType() == TokenType::GREATER_OR_EQUAL )
+        if( lexer->getCurrentToken().getType() == TokenType::LOWER_OR_EQUAL ||
+            lexer->getCurrentToken().getType() == TokenType::LOWER ||
+            lexer->getCurrentToken().getType() == TokenType::GREATER ||
+            lexer->getCurrentToken().getType() == TokenType::GREATER_OR_EQUAL )
         {
             RelationType relation;
 
-            if( lexer.getCurrentToken().getType() == TokenType::LOWER )
+            if( lexer->getCurrentToken().getType() == TokenType::LOWER )
                 relation = RelationType::LOWER;
-            else if( lexer.getCurrentToken().getType() == TokenType::LOWER_OR_EQUAL )
+            else if( lexer->getCurrentToken().getType() == TokenType::LOWER_OR_EQUAL )
                 relation = RelationType::LOWER_OR_EQUAL;
-            else if( lexer.getCurrentToken().getType() == TokenType::GREATER_OR_EQUAL )
+            else if( lexer->getCurrentToken().getType() == TokenType::GREATER_OR_EQUAL )
                 relation = RelationType::GREATER_OR_EQUAL;
             else
                 relation = RelationType::GREATER;
 
-            lexer.getNextToken();
+            lexer->getNextToken();
 
             if( std::optional<std::unique_ptr<Assignable>> second_element = tryToParseAdditiveExpression() )
             {
@@ -785,12 +802,21 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseComparison() {
             }
             else
             {
-                throw ParserException("comparison expected additive expression", lexer.getCurrentToken().getPosition().line, lexer.getCurrentToken().getPosition().sign );
+                throw ParserException("comparison expected additive expression", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
             }
         }
 
         return std::make_unique<Comparison>( std::move(first_element.value()) );
     }
     return std::nullopt;
+}
+
+Lexer *Parser::get_lexer() const {
+    return lexer;
+}
+
+void Parser::set_lexer(Lexer *lexer) {
+    Parser::lexer = lexer;
+    emit lexer_changed();
 }
 

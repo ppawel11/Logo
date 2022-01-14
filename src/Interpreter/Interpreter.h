@@ -37,16 +37,25 @@
 #include "Exception/InterpreterException.h"
 #include <functional>
 
+#include <QtCore/QObject>
+
 typedef std::function<void()> Callback;
 
-class Interpreter {
+class Interpreter: public QObject {
+Q_OBJECT
+
+    Q_PROPERTY(DrawingController * drawing_controller MEMBER drawing_controller WRITE set_drawing_controller READ get_drawing_controller NOTIFY drawing_controller_changed );
     ScopeStack scope_stack;
     IOController io_controller;
-    DrawingController drawing_controller;
+    DrawingController * drawing_controller;
 
     std::map<std::string, Callback> std_functions;
 public:
-    explicit Interpreter( ): scope_stack {}, io_controller {}, drawing_controller {} {
+    DrawingController *get_drawing_controller() const;
+
+    void set_drawing_controller(DrawingController *drawingController);
+
+    explicit Interpreter( ): scope_stack {}, io_controller {}, drawing_controller { nullptr } {
         std_functions.insert( { std::string("write"), [this]() { return this->write(); } } );
         std_functions.insert( { std::string("read"), [this]() { return this->read(); } } );
         std_functions.insert( { std::string("forward"), [this]() { return this->forward(); } } );
@@ -58,7 +67,7 @@ public:
         std_functions.insert( { std::string("clear"), [this]() { return this->clear(); } } );
     };
 
-    void interpret(Program program);
+
 
     void interpret(ForEachLoop * for_each_loop);
     void interpret(FunctionCall * function_call);
@@ -96,6 +105,14 @@ public:
     void reset();
     void clear();
     void switch_();
+
+public slots:
+
+    void interpret(Program *program);
+
+signals:
+    void drawing_controller_changed();
+    void error(QString error);
 
 };
 

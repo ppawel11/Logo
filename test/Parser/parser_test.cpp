@@ -30,6 +30,7 @@ TEST_F(parser_test, parser_basic_test )
     std::istringstream input(to_be_parsed);
     SourceInterface * scanner = new StringStreamSource(input);
     Lexer lexer = Lexer(scanner);
-    Parser parser = Parser(lexer);
-    Program program = parser.parseProgram();
+    Parser parser = Parser(&lexer);
+    Program program = Program();
+    parser.parseProgram( &program );
 }

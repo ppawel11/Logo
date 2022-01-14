@@ -1,19 +1,30 @@
 #include "Interpreter.h"
 
-void Interpreter::interpret( Program program ) {
-    for( auto& func_def : program.func_defs )
-    {
-        if( std_functions.find( func_def.first ) != std_functions.end() )
+void Interpreter::interpret(Program *program ) {
+    try {
+        if( program == nullptr )
         {
-            throw InterpreterException("Redefinition of standard " + func_def.first + " function");
+            throw InterpreterException("Program undefined");
         }
-    }
 
-    scope_stack.init_global( std::move( program.func_defs ) );
+        for( auto& func_def : program->func_defs )
+        {
+            if( std_functions.find( func_def.first ) != std_functions.end() )
+            {
+                throw InterpreterException("Redefinition of standard " + func_def.first + " function");
+            }
+        }
 
-    for( auto const & elem : program.instructions )
-    {
-        elem->be_handled( this );
+        scope_stack.init_global( std::move( program->func_defs ) );
+
+        for( auto const & elem : program->instructions )
+        {
+            elem->be_handled( this );
+        }
+
+        scope_stack.return_call();
+    } catch( InterpreterException & e) {
+        emit error( QString::fromStdString("Interpreter: " + std::string(e.what())));
     }
 }
 
@@ -345,29 +356,38 @@ void Interpreter::read() {
 }
 
 void Interpreter::forward() {
-    drawing_controller.draw_line( std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
+    drawing_controller->draw_line( std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
 }
 
 void Interpreter::backward() {
-    drawing_controller.draw_line( -1 * std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
+    drawing_controller->draw_line( -1 * std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
 }
 
 void Interpreter::circle() {
-    drawing_controller.draw_circle( std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
+    drawing_controller->draw_circle( std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
 }
 
 void Interpreter::turn() {
-    drawing_controller.turn( std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
+    drawing_controller->turn( std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
 }
 
 void Interpreter::reset() {
-    drawing_controller.reset();
+    drawing_controller->reset();
 }
 
 void Interpreter::clear() {
-    drawing_controller.clear();
+    drawing_controller->clear();
 }
 
 void Interpreter::switch_() {
-    drawing_controller.switch_mode();
+    drawing_controller->switch_mode();
+}
+
+DrawingController *Interpreter::get_drawing_controller() const {
+    return drawing_controller;
+}
+
+void Interpreter::set_drawing_controller(DrawingController *drawingController) {
+    drawing_controller = drawingController;
+    emit drawing_controller_changed();
 }

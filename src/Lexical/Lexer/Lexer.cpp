@@ -132,8 +132,12 @@ const Token &Lexer::getCurrentToken() const {
     return current_token;
 }
 
-void Lexer::setScanner(SourceInterface *_scanner) {
+void Lexer::set_source(SourceInterface *_scanner) {
     Lexer::scanner = _scanner;
+
+    current_token = Token(TokenType::INVALID, Position(0, 0, -1));
+    current_token_position = {0, 0, 0};
+    emit source_changed();
 }
 
 int Lexer::getMaxLiteralLength() const {
@@ -150,4 +154,8 @@ int Lexer::getMaxStringLength() const {
 
 void Lexer::setMaxStringLength(int maxStringLength) {
     max_string_length = maxStringLength;
+}
+
+SourceInterface *Lexer::get_source() const {
+    return scanner;
 }
