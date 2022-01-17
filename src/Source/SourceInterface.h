@@ -3,12 +3,16 @@
 
 #include "Position.h"
 
-class SourceInterface {
+#include <QtCore/QObject>
+
+class SourceInterface: public QObject {
+    Q_OBJECT
 protected:
     Position current_position;
     char current_char;
 public:
-    SourceInterface():
+    SourceInterface(QObject * parent = nullptr):
+        QObject(parent),
         current_position{0, 0, 0},
         current_char{0}
         {

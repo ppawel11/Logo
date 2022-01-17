@@ -38,7 +38,6 @@ TEST_F(multiple_tokens_test, basic_program_1 )
     ASSERT_EQ(lexer.getNextToken().getType(), TokenType::SEMICOLON);
     ASSERT_EQ(lexer.getNextToken().getType(), TokenType::REPEAT);
     ASSERT_EQ(lexer.getNextToken().getType(), TokenType::PARENTHESIS_OPEN);
-//    token = lexer.getNextToken();
     ASSERT_EQ(lexer.getNextToken().getType(), TokenType::LABEL);
     ASSERT_EQ(lexer.getCurrentToken().getLiteralValue(), "num_1");
     ASSERT_EQ(lexer.getNextToken().getType(), TokenType::PARENTHESIS_CLOSE);

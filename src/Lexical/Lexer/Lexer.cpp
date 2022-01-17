@@ -7,7 +7,9 @@ const Token &Lexer::getNextToken() {
     char next_char = scanner->getNextChar();
 
     while( std::isblank(next_char) )
+    {
         next_char = scanner->getNextChar();
+    }
 
     current_token_position = scanner->getCurrentPosition();
 
@@ -42,14 +44,14 @@ Token Lexer::getStringToken() {
             next_char = scanner->getNextChar();
             if( scanner->eof() )
             {
-                throw std::runtime_error("eof while scanning string");
+                throw LexicalException("eof while scanning string", current_token_position.line, current_token_position.sign);
             }
         }
 
         str.append(1, next_char);
         if( str.length() > max_string_length )
         {
-            throw std::runtime_error("string too long");
+            throw LexicalException("string too long", current_token_position.line, current_token_position.sign);
         }
 
         next_char = scanner->getNextChar();
@@ -80,7 +82,7 @@ Token Lexer::getLiteralToken() {
         literal_length++;
         if( literal_length > max_literal_length )
         {
-            throw std::runtime_error("literal too long");
+            throw LexicalException("literal too long", current_token_position.line, current_token_position.sign );
         }
         literal.append(1, scanner->getNextChar());
     }
@@ -130,8 +132,12 @@ const Token &Lexer::getCurrentToken() const {
     return current_token;
 }
 
-void Lexer::setScanner(SourceInterface *_scanner) {
+void Lexer::set_source(SourceInterface *_scanner) {
     Lexer::scanner = _scanner;
+
+    current_token = Token(TokenType::INVALID, Position(0, 0, -1));
+    current_token_position = {0, 0, 0};
+    emit source_changed();
 }
 
 int Lexer::getMaxLiteralLength() const {
@@ -148,4 +154,8 @@ int Lexer::getMaxStringLength() const {
 
 void Lexer::setMaxStringLength(int maxStringLength) {
     max_string_length = maxStringLength;
+}
+
+SourceInterface *Lexer::get_source() const {
+    return scanner;
 }
