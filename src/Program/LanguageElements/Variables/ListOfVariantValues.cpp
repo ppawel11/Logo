@@ -1,7 +1,7 @@
 #include "ListOfVariantValues.h"
-#include "../../../Interpreter/Interpreter.h"
+#include "../Variables/Evaluator.h"
 
-void ListOfVariantValues::be_evaluated(Interpreter *interpreter) {
+void ListOfVariantValues::be_evaluated(Evaluator *interpreter) {
     interpreter->evaluate(this);
 }
 

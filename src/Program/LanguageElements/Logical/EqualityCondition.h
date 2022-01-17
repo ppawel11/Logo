@@ -28,7 +28,7 @@ public:
 
     const std::optional<bool> &getEquals() const;
 
-    void be_evaluated(Interpreter *interpreter) override;
+    void be_evaluated(Evaluator *interpreter) override;
 };
 
 

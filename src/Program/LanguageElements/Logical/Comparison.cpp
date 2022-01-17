@@ -1,7 +1,7 @@
 #include "Comparison.h"
-#include "../../../Interpreter/Interpreter.h"
+#include "../Variables/Evaluator.h"
 
-void Comparison::be_evaluated(Interpreter *interpreter) {
+void Comparison::be_evaluated(Evaluator *interpreter) {
     interpreter->evaluate(this);
 }
 

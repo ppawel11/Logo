@@ -180,71 +180,18 @@ ApplicationWindow{
             }
         }
 
-     //Button {
-     //    height: 100
-     //    Layout.fillWidth: true
-     //    id: line
-     //    text: qsTr("line")
+         Button {
+             height: 100
+             Layout.fillWidth: true
+             id: reset_
+             text: qsTr("reset")
 
-     //    onClicked: {
-     //        drawing_controller.draw_line(100);
-     //    }
-     //}
+             onClicked: {
+                 drawing_controller.reset();
+                 drawing_controller.clear();
+             }
+         }
 
-     //Button {
-     //    height: 100
-     //    Layout.fillWidth: true
-     //    id: reset_
-     //    text: qsTr("reset")
-
-     //    onClicked: {
-     //        drawing_controller.reset();
-     //    }
-     //}
-
-     //Button {
-     //    height: 100
-     //    Layout.fillWidth: true
-     //    id: switch_
-     //    text: qsTr("switch")
-
-     //    onClicked: {
-     //        drawing_controller.switch_mode();
-     //    }
-     //}
-
-     //Button {
-     //    height: 100
-     //    Layout.fillWidth: true
-     //    id: clear_
-     //    text: qsTr("clear")
-
-     //    onClicked: {
-     //        drawing_controller.clear();
-     //    }
-     //}
-
-     //Button {
-     //    height: 100
-     //    Layout.fillWidth: true
-     //    id: circle_
-     //    text: qsTr("circle")
-
-     //    onClicked: {
-     //        drawing_controller.draw_circle( 100 );
-     //    }
-     //}
-
-     //Button {
-     //    height: 100
-     //    Layout.fillWidth: true
-     //    id: aa_
-     //    text: qsTr("print kod")
-
-     //    onClicked: {
-     //        console.log(code.text);
-     //    }
-     //}
     }
 
 }

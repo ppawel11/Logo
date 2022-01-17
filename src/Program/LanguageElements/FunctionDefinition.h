@@ -27,7 +27,7 @@ public:
         func_def.body = std::move(body);
     }
 
-    void be_handled(Interpreter *interpreter) override;
+    void be_handled(LanguageElementVisitor *interpreter) override;
 
     const std::string &getName() const {
         return name;

@@ -32,8 +32,6 @@ set(SOURCE
         src/Program/LanguageElements/Block.h
         src/Program/LanguageElements/ForEachLoop.cpp
         src/Program/LanguageElements/ForEachLoop.h
-        src/Program/LanguageElements/FunctionBody.cpp
-        src/Program/LanguageElements/FunctionBody.h
         src/Program/LanguageElements/FunctionCall.cpp
         src/Program/LanguageElements/FunctionCall.h
         src/Program/LanguageElements/FunctionDefinition.cpp
@@ -92,6 +90,7 @@ set(SOURCE
         src/Program/LanguageElements/Variables/String.h
         src/Program/LanguageElements/Variables/Assignable.cpp
         src/Program/LanguageElements/Variables/Assignable.h
+        src/Program/LanguageElements/Variables/Evaluator.h
         src/Program/LanguageElements/Math/NegatedMathElement.cpp
         src/Program/LanguageElements/Math/NegatedMathElement.h
         src/Program/LanguageElements/Variables/VariantValue.cpp
@@ -102,6 +101,7 @@ set(SOURCE
         src/Program/LanguageElements/ListOfAssignable.h
         src/Program/LanguageElements/Logical/NegatedLogicalElement.cpp
         src/Program/LanguageElements/Logical/NegatedLogicalElement.h
+        src/Program/LanguageElements/LanguageElementVisitor.h
         src/Interpreter/OperationExecutors/SumExecutor.h
         src/Interpreter/OperationExecutors/DivisionExecutor.h
         src/Interpreter/OperationExecutors/MultiplicationExecutor.h
@@ -116,6 +116,25 @@ set(SOURCE
         src/Interpreter/OperationExecutors/Caster.h
         src/Interpreter/IOController/IOController.cpp
         src/Interpreter/IOController/IOController.h
+        src/Interpreter/StandardLibrary/Backward.h
+        src/Interpreter/StandardLibrary/Backward.cpp
+        src/Interpreter/StandardLibrary/Forward.h
+        src/Interpreter/StandardLibrary/Forward.cpp
+        src/Interpreter/StandardLibrary/Clear.h
+        src/Interpreter/StandardLibrary/Clear.cpp
+        src/Interpreter/StandardLibrary/Circle.h
+        src/Interpreter/StandardLibrary/Circle.cpp
+        src/Interpreter/StandardLibrary/Read.h
+        src/Interpreter/StandardLibrary/Read.cpp
+        src/Interpreter/StandardLibrary/Reset.h
+        src/Interpreter/StandardLibrary/Reset.cpp
+        src/Interpreter/StandardLibrary/Write.h
+        src/Interpreter/StandardLibrary/Write.cpp
+        src/Interpreter/StandardLibrary/Switch.h
+        src/Interpreter/StandardLibrary/Switch.cpp
+        src/Interpreter/StandardLibrary/Turn.h
+        src/Interpreter/StandardLibrary/Turn.cpp
+        src/Interpreter/StandardLibrary/STD.h
         )
 
 
@@ -125,6 +144,7 @@ set(TEST_SOURCE
         test/Source/string_source_test.cpp
         test/Token/token_test.cpp
         test/Parser/parser_test.cpp
+        test/Parser/LanguageElementVisitorMock.h
         )
 
 if(GUI)
@@ -162,6 +182,7 @@ endif()
 
 TARGET_LINK_LIBRARIES(TKOM_testing
         gtest
+        gmock
         gtest_main
         ${QT_PACK}
  )

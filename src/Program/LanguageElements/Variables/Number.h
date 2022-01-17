@@ -16,7 +16,7 @@ public:
     Number(): value{0} {};
     explicit Number(int value_): value{value_}, Assignable() {}
     ~Number() = default;
-    void be_evaluated(Interpreter* interpreter) override;
+    void be_evaluated(Evaluator *interpreter) override;
 
 };
 

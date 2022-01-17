@@ -1,7 +1,7 @@
 #include "VariableAssignment.h"
-#include "../../Interpreter/Interpreter.h"
+#include "LanguageElementVisitor.h"
 
-void VariableAssignment::be_handled(Interpreter *interpreter) {
+void VariableAssignment::be_handled(LanguageElementVisitor *interpreter) {
     interpreter->interpret(this);
 }
 

@@ -1,7 +1,7 @@
 #include "EqualityCondition.h"
-#include "../../../Interpreter/Interpreter.h"
+#include "../Variables/Evaluator.h"
 
-void EqualityCondition::be_evaluated(Interpreter *interpreter) {
+void EqualityCondition::be_evaluated(Evaluator *interpreter) {
     interpreter->evaluate(this);
 }
 

@@ -21,10 +21,10 @@ public:
     FunctionCall(std::string name_, Arguments arguments_):
         name{std::move( name_ )}, arguments{std::move( arguments_ )}, LanguageElement() {}
 //
-    void be_handled(Interpreter *interpreter) override;
+    void be_handled(LanguageElementVisitor *interpreter) override;
 //    explicit FunctionCall(std::string name_):
 //        name{std::move( name_ )}, arguments(), Statement() {}
-    void be_evaluated(Interpreter *interpreter) override;
+    void be_evaluated(Evaluator *interpreter) override;
 };
 
 

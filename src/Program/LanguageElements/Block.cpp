@@ -1,6 +1,6 @@
 #include "Block.h"
-#include "../../Interpreter/Interpreter.h"
+#include "LanguageElementVisitor.h"
 
-void Block::be_handled(Interpreter *interpreter) {
+void Block::be_handled(LanguageElementVisitor *interpreter) {
     interpreter->interpret( this );
 }

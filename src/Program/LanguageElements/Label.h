@@ -11,7 +11,7 @@ public:
     Label( std::string variable_name_ ): variable_name{variable_name_ }, Assignable() {}
 
     std::string get_variable_name();
-    void be_evaluated(Interpreter *interpreter) override;
+    void be_evaluated(Evaluator *interpreter) override;
 };
 
 

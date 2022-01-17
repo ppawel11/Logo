@@ -12,7 +12,7 @@ class ListOfAssignable: public Assignable {
 public:
     explicit ListOfAssignable(std::vector<std::unique_ptr<Assignable>> elements_): elements{std::move( elements_ )}, Assignable() {}
 
-    void be_evaluated(Interpreter *interpreter) override;
+    void be_evaluated(Evaluator *interpreter) override;
 
     const std::vector<std::unique_ptr<Assignable>> & get_elements();
 };

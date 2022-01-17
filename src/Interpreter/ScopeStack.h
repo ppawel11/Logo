@@ -8,6 +8,7 @@
 #include "../Program/LanguageElements/Variables/ListOfVariantValues.h"
 #include "../Program/LanguageElements/Variables/Bool.h"
 #include "../Program/LanguageElements/Variables/Number.h"
+#include "StandardLibrary/STD.h"
 #include <variant>
 #include <optional>
 #include <stack>
@@ -25,7 +26,9 @@ public:
 
     void setReturned(bool returned);
 
-    ScopeStack(): last_result{ std::nullopt }, call_stack(), func_map(), returned{ false } {}
+    ScopeStack(): last_result{ std::nullopt }, call_stack(), func_map( std::move( tkom::std_lib::init_functions() )), returned{ false } {
+
+    }
 
 
     void init_global(std::map<std::string, std::unique_ptr<FunctionDefinition>> func_defs_);

@@ -22,7 +22,7 @@ public:
 
     explicit ListOfVariantValues( std::vector<std::variant<Number, Bool, String, ListOfVariantValues>> elements) : elements{std::move(elements )} {}
     ~ListOfVariantValues() = default;
-    void be_evaluated(Interpreter *interpreter) override;
+    void be_evaluated(Evaluator *interpreter) override;
 };
 
 

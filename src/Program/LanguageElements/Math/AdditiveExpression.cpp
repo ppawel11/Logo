@@ -1,7 +1,7 @@
 #include "AdditiveExpression.h"
-#include "../../../Interpreter/Interpreter.h"
+#include "../Variables/Evaluator.h"
 
-void AdditiveExpression::be_evaluated(Interpreter *interpreter) {
+void AdditiveExpression::be_evaluated(Evaluator *interpreter) {
     interpreter->evaluate(this);
 }
 

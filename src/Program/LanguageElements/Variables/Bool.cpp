@@ -1,8 +1,8 @@
 #include "Bool.h"
-#include "../../../Interpreter/Interpreter.h"
+#include "Evaluator.h"
 #include <system_error>
 
-void Bool::be_evaluated(Interpreter* interpreter) {
+void Bool::be_evaluated(Evaluator *interpreter) {
     interpreter->evaluate(this);
 }
 

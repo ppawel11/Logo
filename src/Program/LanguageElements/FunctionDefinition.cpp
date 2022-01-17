@@ -1,6 +1,6 @@
 #include "FunctionDefinition.h"
-#include "../../Interpreter/Interpreter.h"
+#include "LanguageElementVisitor.h"
 
-void FunctionDefinition::be_handled(Interpreter *interpreter) {
+void FunctionDefinition::be_handled(LanguageElementVisitor *interpreter) {
     interpreter->interpret(this);
 }

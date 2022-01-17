@@ -18,6 +18,19 @@
 #include "../Program/LanguageElements/Math/NegatedMathElement.h"
 #include "../Program/LanguageElements/Logical/NegatedLogicalElement.h"
 #include "../Program/LanguageElements/Logical/Comparison.h"
+#include "../Program/LanguageElements/LanguageElementVisitor.h"
+#include "../Program/LanguageElements/Variables/Evaluator.h"
+
+#include "StandardLibrary/Backward.h"
+#include "StandardLibrary/Forward.h"
+#include "StandardLibrary/Circle.h"
+#include "StandardLibrary/Clear.h"
+#include "StandardLibrary/Switch.h"
+#include "StandardLibrary/Reset.h"
+#include "StandardLibrary/Read.h"
+#include "StandardLibrary/Write.h"
+#include "StandardLibrary/Turn.h"
+#include "StandardLibrary/STD.h"
 
 #include "OperationExecutors/SumExecutor.h"
 #include "OperationExecutors/SubtractionExecutor.h"
@@ -39,9 +52,9 @@
 
 #include <QtCore/QObject>
 
-typedef std::function<void()> Callback;
+//typedef std::function<void()> Callback;
 
-class Interpreter: public QObject {
+class Interpreter: public QObject, public LanguageElementVisitor, public Evaluator {
 Q_OBJECT
 
     Q_PROPERTY(DrawingController * drawing_controller MEMBER drawing_controller WRITE set_drawing_controller READ get_drawing_controller NOTIFY drawing_controller_changed );
@@ -49,62 +62,60 @@ Q_OBJECT
     IOController io_controller;
     DrawingController * drawing_controller;
 
-    std::map<std::string, Callback> std_functions;
 public:
     DrawingController *get_drawing_controller() const;
 
     void set_drawing_controller(DrawingController *drawingController);
 
-    explicit Interpreter( ): scope_stack {}, io_controller {}, drawing_controller { nullptr } {
-        std_functions.insert( { std::string("write"), [this]() { return this->write(); } } );
-        std_functions.insert( { std::string("read"), [this]() { return this->read(); } } );
-        std_functions.insert( { std::string("forward"), [this]() { return this->forward(); } } );
-        std_functions.insert( { std::string("backward"), [this]() { return this->backward(); } } );
-        std_functions.insert( { std::string("turn"), [this]() { return this->turn(); } } );
-        std_functions.insert( { std::string("switch"), [this]() { return this->switch_(); } } );
-        std_functions.insert( { std::string("reset"), [this]() { return this->reset(); } } );
-        std_functions.insert( { std::string("circle"), [this]() { return this->circle(); } } );
-        std_functions.insert( { std::string("clear"), [this]() { return this->clear(); } } );
-    };
+    explicit Interpreter( ): scope_stack {}, io_controller {}, drawing_controller { nullptr } {};
 
 
 
-    void interpret(ForEachLoop * for_each_loop);
-    void interpret(FunctionCall * function_call);
-    void interpret(FunctionDefinition * function_definition);
-    void interpret(If * if_statement);
-    void interpret(RepeatLoop * repeat_loop);
-    void interpret(WhileLoop * while_loop);
-    void interpret(Return * return_statement);
-    void interpret(VariableAssignment * variable_assignment);
-    void interpret(VariableDeclaration * variable_declaration);
-    void interpret(Block * block);
+    void interpret(ForEachLoop * for_each_loop) override;
+    void interpret(FunctionCall * function_call) override;
+    void interpret(FunctionDefinition * function_definition) override;
+    void interpret(If * if_statement) override;
+    void interpret(RepeatLoop * repeat_loop) override;
+    void interpret(WhileLoop * while_loop) override;
+    void interpret(Return * return_statement) override;
+    void interpret(VariableAssignment * variable_assignment) override;
+    void interpret(VariableDeclaration * variable_declaration) override;
+    void interpret(Block * block) override;
+    void interpret(Backward * backward) override;
+    void interpret(Circle * circle) override;
+    void interpret(Clear * clear) override;
+    void interpret(Forward * forward) override;
+    void interpret(Read * read) override;
+    void interpret(Reset * reset) override;
+    void interpret(Switch * switch_) override;
+    void interpret(Turn * turn) override;
+    void interpret(Write * write) override;
 
-    void evaluate(AndCondition * and_condition);
-    void evaluate(OrCondition * or_condition);
-    void evaluate(Comparison * comparison);
-    void evaluate(EqualityCondition * equality_condition);
-    void evaluate(AdditiveExpression * additive_expression);
-    void evaluate(MultiplyExpression * multiply_expression);
-    void evaluate(FunctionCall * function_call);
-    void evaluate(Bool * bool_val);
-    void evaluate(String * string_val);
-    void evaluate(Number * num_val);
-    void evaluate(ListOfVariantValues * list_val);
-    void evaluate(ListOfAssignable * list_val);
-    void evaluate(Label * label_val);
-    void evaluate(NegatedMathElement * negated_math_element);
-    void evaluate(NegatedLogicalElement * negated_logical_element);
+    void evaluate(AndCondition * and_condition) override;
+    void evaluate(OrCondition * or_condition) override;
+    void evaluate(Comparison * comparison) override;
+    void evaluate(EqualityCondition * equality_condition) override;
+    void evaluate(AdditiveExpression * additive_expression) override;
+    void evaluate(MultiplyExpression * multiply_expression) override;
+    void evaluate(FunctionCall * function_call) override;
+    void evaluate(Bool * bool_val) override;
+    void evaluate(String * string_val) override;
+    void evaluate(Number * num_val) override;
+    void evaluate(ListOfVariantValues * list_val) override;
+    void evaluate(ListOfAssignable * list_val) override;
+    void evaluate(Label * label_val) override;
+    void evaluate(NegatedMathElement * negated_math_element) override;
+    void evaluate(NegatedLogicalElement * negated_logical_element) override;
 
-    void write();
-    void read();
-    void forward();
-    void backward();
-    void circle();
-    void turn();
-    void reset();
-    void clear();
-    void switch_();
+//    void write();
+//    void read();
+//    void forward();
+//    void backward();
+//    void circle();
+//    void turn();
+//    void reset();
+//    void clear();
+//    void switch_();
 
 public slots:
 

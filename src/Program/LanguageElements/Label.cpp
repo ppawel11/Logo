@@ -1,7 +1,7 @@
 #include "Label.h"
-#include "../../Interpreter/Interpreter.h"
+#include "Variables/Evaluator.h"
 
-void Label::be_evaluated(Interpreter *interpreter) {
+void Label::be_evaluated(Evaluator *interpreter) {
     interpreter->evaluate( this );
 }
 

@@ -26,7 +26,10 @@ void ScopeStack::set_var(const std::string &name, const std::variant<Number, Boo
 void ScopeStack::init_global(std::map<std::string, std::unique_ptr<FunctionDefinition>> func_defs_) {
     call_stack.push( CallContext() );
 
-    func_map = std::move( func_defs_ );
+//    func_map = std::move( func_defs_ );
+    for( auto& func_def : func_defs_ ) {
+        func_map[func_def.first] = std::move(func_def.second);
+    }
 
     last_result = std::nullopt;
 }

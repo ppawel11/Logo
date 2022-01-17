@@ -1,11 +1,12 @@
 #include "FunctionCall.h"
-#include "../../Interpreter/Interpreter.h"
+#include "LanguageElementVisitor.h"
+#include "Variables/Evaluator.h"
 
-void FunctionCall::be_handled(Interpreter *interpreter) {
+void FunctionCall::be_handled(LanguageElementVisitor *interpreter) {
     interpreter->interpret(this);
 }
 
-void FunctionCall::be_evaluated(Interpreter *interpreter) {
+void FunctionCall::be_evaluated(Evaluator *interpreter) {
     interpreter->evaluate(this);
 }
 

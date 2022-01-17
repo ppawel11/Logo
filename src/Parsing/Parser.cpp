@@ -2,7 +2,7 @@
 
 
 
-void Parser::parseProgram(Program *program) {
+void Parser::parseProgram(LanguageElementsHolder *program) {
     //std::vector<std::unique_ptr<LanguageElement>> statements;
     //std::map<std::string, std::unique_ptr<FunctionDefinition>> func_definitions;
     try {
@@ -25,11 +25,11 @@ void Parser::parseProgram(Program *program) {
         {
             if( lang_element )
             {
-                program->instructions.push_back(std::move(lang_element.value()));
+                program->append_instructions( lang_element.value() );
             }
             else
             {
-                program->func_defs[func_definition.value()->getName()] = std::move(func_definition.value());
+                program->append_functions( func_definition.value() );
             }
         }
 
@@ -42,7 +42,6 @@ void Parser::parseProgram(Program *program) {
         emit error( QString::fromStdString("Parser: " + std::string( e.what() ) ) );
     }
 
-    //return Program( std::move(statements), std::move(func_definitions) );
 }
 
 std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseLanguageElement() {
@@ -182,6 +181,7 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseIf() {
 
         if( lexer->getCurrentToken().getType() == TokenType::ELSE )
         {
+            lexer->getNextToken();
             if( !(else_statement = tryToParseBlock()) )
             {
                 throw ParserException("else missing block", lexer->getCurrentToken().getPosition().line, lexer->getCurrentToken().getPosition().sign );
@@ -428,9 +428,10 @@ std::optional<std::unique_ptr<LanguageElement>> Parser::tryToParseReturn() {
 std::optional<std::unique_ptr<Assignable>> Parser::tryToParseAssignable() {
     std::optional<std::unique_ptr<Assignable>> assignable;
 
-    if(( assignable = tryToParseList() ) ||
-       ( assignable = tryToParseOrCondition() ) ||
-       ( assignable = tryToParseString() ) )
+//    if(( assignable = tryToParseList() ) ||
+//       ( assignable = tryToParseOrCondition() ) ||
+//       ( assignable = tryToParseString() ) )
+    if( (assignable = tryToParseOrCondition()) )
     {
         return assignable;
     }
@@ -514,7 +515,13 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseMultiplyExpression(
 
 std::optional<std::unique_ptr<Assignable>> Parser::tryToParseMathElement() {
     bool is_negated = false;
-    std::unique_ptr<Assignable> result = nullptr;
+    std::optional<std::unique_ptr<Assignable>> result = std::nullopt;
+
+    if( ( result = tryToParseList() ) ||
+        ( result = tryToParseString() ) )
+    {
+        return result;
+    }
 
     if( lexer->getCurrentToken().getType() == TokenType::MINUS )
     {
@@ -546,11 +553,11 @@ std::optional<std::unique_ptr<Assignable>> Parser::tryToParseMathElement() {
         result = std::move( parent_expr.value() );
     }
 
-    if( result != nullptr )
+    if( result != std::nullopt )
     {
         if( is_negated )
         {
-            return std::make_unique<NegatedMathElement>( std::move(result) );
+            return std::make_unique<NegatedMathElement>( std::move(result.value()) );
         }
         return result;
     }

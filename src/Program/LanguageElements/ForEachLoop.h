@@ -19,7 +19,7 @@ public:
             container{std::move(container_label_ )},
             loop{ std::move(loop_) } {}
 
-    void be_handled(Interpreter *interpreter) override;
+    void be_handled(LanguageElementVisitor *interpreter) override;
 
     const std::string &getValueLabel() const;
 

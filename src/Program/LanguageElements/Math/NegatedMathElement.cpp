@@ -1,7 +1,7 @@
 #include "NegatedMathElement.h"
-#include "../../../Interpreter/Interpreter.h"
+#include "../Variables/Evaluator.h"
 
-void NegatedMathElement::be_evaluated(Interpreter *interpreter) {
+void NegatedMathElement::be_evaluated(Evaluator *interpreter) {
     interpreter->evaluate(this);
 }
 

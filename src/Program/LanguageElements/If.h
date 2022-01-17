@@ -19,7 +19,7 @@ public:
         else_block{ std::move(else_block_) }
     {}
 
-    void be_handled(Interpreter *interpreter) override;
+    void be_handled(LanguageElementVisitor *interpreter) override;
 
     const std::unique_ptr<LanguageElement> & getIfBlock() const;
 

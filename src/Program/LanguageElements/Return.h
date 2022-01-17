@@ -10,7 +10,7 @@ class Return: public LanguageElement {
 public:
     explicit Return( std::unique_ptr<Assignable> value_ ): value{ std::move(value_) }, LanguageElement() {}
 
-    void be_handled(Interpreter *interpreter) override;
+    void be_handled(LanguageElementVisitor *interpreter) override;
 
     const std::unique_ptr<Assignable> & getValue() const;
 };

@@ -1,7 +1,7 @@
 #include "VariableDeclaration.h"
-#include "../../Interpreter/Interpreter.h"
+#include "LanguageElementVisitor.h"
 
-void VariableDeclaration::be_handled(Interpreter *interpreter) {
+void VariableDeclaration::be_handled(LanguageElementVisitor *interpreter) {
     interpreter->interpret(this);
 }
 

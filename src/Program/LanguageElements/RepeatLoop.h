@@ -19,7 +19,7 @@ public:
         LanguageElement()
     {}
 
-    void be_handled(Interpreter *interpreter) override;
+    void be_handled(LanguageElementVisitor *interpreter) override;
 
     const std::unique_ptr<Assignable> & getRepeats() const;
 

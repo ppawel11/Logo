@@ -11,7 +11,7 @@ public:
     Bool(): value{ false } {};
     explicit Bool(bool value_): value{value_}, Assignable() {}
     ~Bool() = default;
-    void be_evaluated(Interpreter* interpreter) override;
+    void be_evaluated(Evaluator *interpreter) override;
 
     bool isValue() const;
 

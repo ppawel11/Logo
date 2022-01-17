@@ -1,7 +1,7 @@
 #include "String.h"
-#include "../../../Interpreter/Interpreter.h"
+#include "../Variables/Evaluator.h"
 
-void String::be_evaluated(Interpreter *interpreter) {
+void String::be_evaluated(Evaluator *interpreter) {
     interpreter->evaluate(this);
 }
 

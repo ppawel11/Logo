@@ -18,7 +18,7 @@ public:
 
     explicit Scope(std::map<std::string, std::variant<Number, Bool, String, ListOfVariantValues>> args): symbols{std::move(args)} {}
 
-    void set_symbol(const std::string &name, const std::variant<Number, Bool, String, ListOfVariantValues> &value_ );
+    void set_symbol(const std::string &name, const std::variant<Number, Bool, String, ListOfVariantValues> value_ );
 
     std::variant<Number, Bool, String, ListOfVariantValues> get_symbol(const std::string& name );
 

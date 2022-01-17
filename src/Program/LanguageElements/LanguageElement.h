@@ -1,7 +1,9 @@
 #ifndef TKOM_LANGUAGEELEMENT_H
 #define TKOM_LANGUAGEELEMENT_H
 
-class Interpreter;
+#include "LanguageElementVisitor.h"
+
+class LanguageElementVisitor;
 
 class LanguageElement {
 public:
@@ -9,7 +11,7 @@ public:
 //    LanguageElement(const LanguageElement&) = delete;
 //    LanguageElement(LanguageElement&&) = default;
 
-    virtual void be_handled(Interpreter *interpreter) {};
+    virtual void be_handled(LanguageElementVisitor *interpreter) {};
 };
 
 

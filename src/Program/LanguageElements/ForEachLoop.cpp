@@ -1,7 +1,7 @@
 #include "ForEachLoop.h"
-#include "../../Interpreter/Interpreter.h"
+#include "LanguageElementVisitor.h"
 
-void ForEachLoop::be_handled(Interpreter *interpreter) {
+void ForEachLoop::be_handled(LanguageElementVisitor *interpreter) {
     interpreter->interpret(this);
 }
 

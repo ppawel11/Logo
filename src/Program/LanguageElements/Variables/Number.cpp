@@ -1,8 +1,8 @@
 #include "Number.h"
-#include "../../../Interpreter/Interpreter.h"
+#include "../Variables/Evaluator.h"
 #include <system_error>
 
-void Number::be_evaluated(Interpreter* interpreter) {
+void Number::be_evaluated(Evaluator *interpreter) {
     interpreter->evaluate(this);
 }
 

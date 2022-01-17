@@ -1,7 +1,7 @@
 #include "OrCondition.h"
-#include "../../../Interpreter/Interpreter.h"
+#include "../Variables/Evaluator.h"
 
-void OrCondition::be_evaluated(Interpreter *interpreter) {
+void OrCondition::be_evaluated(Evaluator *interpreter) {
     interpreter->evaluate(this);
 }
 

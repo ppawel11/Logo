@@ -13,7 +13,7 @@ public:
     String(): value{""} {};
     explicit String( std::string value_ ): value{std::move(value_)}, Assignable() {}
     ~String() = default;
-    void be_evaluated(Interpreter *interpreter) override;
+    void be_evaluated(Evaluator *interpreter) override;
 
     const std::string &getValue() const;
 

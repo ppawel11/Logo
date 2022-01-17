@@ -15,7 +15,7 @@ Q_OBJECT
     Q_PROPERTY( bool is_drawing MEMBER get_drawing READ get_drawing WRITE set_drawing NOTIFY drawing_changed );
     double x = 0.0;
     double y = 0.0;
-    double angle = 0.0;
+    double angle = 270.0;
 public:
     bool get_drawing() const;
 

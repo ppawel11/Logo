@@ -10,7 +10,7 @@ class NegatedLogicalElement: public Assignable {
 public:
     explicit NegatedLogicalElement(std::unique_ptr<Assignable> element_): element{ std::move(element_) }, Assignable() {}
 
-    void be_evaluated(Interpreter *interpreter) override;
+    void be_evaluated(Evaluator *interpreter) override;
 
     const std::unique_ptr<Assignable> & getElement() const;
 };

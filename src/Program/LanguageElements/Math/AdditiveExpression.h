@@ -22,7 +22,7 @@ public:
         operators{ std::move(operators_) }
     {}
 
-    void be_evaluated(Interpreter *interpreter) override;
+    void be_evaluated(Evaluator *interpreter) override;
 
     const std::vector<std::unique_ptr<Assignable>> & getExpressions() const;
 

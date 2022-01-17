@@ -1,5 +1,25 @@
 #include "Interpreter.h"
 
+//func trojkat( bok ) {
+//    repeat(3) {
+//        forward(bok);
+//        turn(120);
+//    }
+//}
+//
+//func dywan( bok, ile ) {
+//    if( ile == 0 ) {
+//        trojkat(bok);
+//    }
+//    else {
+//        repeat(3) {
+//            dywan(bok/2, ile-1);
+//            forward(bok);
+//            turn(120);
+//        }
+//    }
+//}
+
 void Interpreter::interpret(Program *program ) {
     try {
         if( program == nullptr )
@@ -9,7 +29,7 @@ void Interpreter::interpret(Program *program ) {
 
         for( auto& func_def : program->func_defs )
         {
-            if( std_functions.find( func_def.first ) != std_functions.end() )
+            if( std::find( tkom::std_lib::function_names.begin(), tkom::std_lib::function_names.end(), func_def.first ) != tkom::std_lib::function_names.end() )
             {
                 throw InterpreterException("Redefinition of standard " + func_def.first + " function");
             }
@@ -25,6 +45,8 @@ void Interpreter::interpret(Program *program ) {
         scope_stack.return_call();
     } catch( InterpreterException & e) {
         emit error( QString::fromStdString("Interpreter: " + std::string(e.what())));
+    } catch( std::runtime_error & e ) {
+        emit error( QString::fromStdString("Interpreter: " + std::string(e.what())));
     }
 }
 
@@ -38,20 +60,9 @@ void Interpreter::interpret(ForEachLoop *for_each_loop) {
     }
 }
 
+
+
 void Interpreter::interpret(FunctionCall *function_call) {
-    if( std_functions.find( function_call->getName() ) != std_functions.end() )
-    {
-        const auto & func_args = function_call->getArguments().getArgs();
-
-        if ( !func_args.empty() )
-        {
-            func_args[0]->be_evaluated( this );
-        }
-
-        std_functions[ function_call->getName() ]();
-        return;
-    }
-
     const auto & func_def = scope_stack.get_function(function_call->getName());
 
     auto func_params = func_def->getParameters();
@@ -73,6 +84,7 @@ void Interpreter::interpret(FunctionCall *function_call) {
     func_def->getBody()->be_handled(this);
 
     scope_stack.return_call();
+
 }
 
 void Interpreter::interpret(FunctionDefinition *function_definition) {
@@ -99,7 +111,8 @@ void Interpreter::interpret(RepeatLoop *repeat_loop) {
 
     if( scope_stack.get_last_result() )
     {
-        for( int i = 0; i < std::visit(Caster<int> {}, scope_stack.get_last_result().value()); ++i )
+        auto limit = std::visit(Caster<int> {}, scope_stack.get_last_result().value());
+        for( int i = 0; i < limit; ++i )
         {
             repeat_loop->getLoop()->be_handled(this);
 
@@ -347,41 +360,41 @@ void Interpreter::evaluate(ListOfAssignable *list_val) {
     scope_stack.set_last_result( ListOfVariantValues(values) );
 }
 
-void Interpreter::write() {
-    io_controller.write( std::visit( Caster<std::string> {}, scope_stack.get_last_result().value() ) );
-}
-
-void Interpreter::read() {
-    scope_stack.set_last_result( String(io_controller.read() ) );
-}
-
-void Interpreter::forward() {
-    drawing_controller->draw_line( std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
-}
-
-void Interpreter::backward() {
-    drawing_controller->draw_line( -1 * std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
-}
-
-void Interpreter::circle() {
-    drawing_controller->draw_circle( std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
-}
-
-void Interpreter::turn() {
-    drawing_controller->turn( std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
-}
-
-void Interpreter::reset() {
-    drawing_controller->reset();
-}
-
-void Interpreter::clear() {
-    drawing_controller->clear();
-}
-
-void Interpreter::switch_() {
-    drawing_controller->switch_mode();
-}
+//void Interpreter::write() {
+//    io_controller.write( std::visit( Caster<std::string> {}, scope_stack.get_last_result().value() ) );
+//}
+//
+//void Interpreter::read() {
+//    scope_stack.set_last_result( String(io_controller.read() ) );
+//}
+//
+//void Interpreter::forward() {
+//    drawing_controller->draw_line( std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
+//}
+//
+//void Interpreter::backward() {
+//    drawing_controller->draw_line( -1 * std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
+//}
+//
+//void Interpreter::circle() {
+//    drawing_controller->draw_circle( std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
+//}
+//
+//void Interpreter::turn() {
+//    drawing_controller->turn( std::visit( Caster<int> {}, scope_stack.get_last_result().value() ) );
+//}
+//
+//void Interpreter::reset() {
+//    drawing_controller->reset();
+//}
+//
+//void Interpreter::clear() {
+//    drawing_controller->clear();
+//}
+//
+//void Interpreter::switch_() {
+//    drawing_controller->switch_mode();
+//}
 
 DrawingController *Interpreter::get_drawing_controller() const {
     return drawing_controller;
@@ -390,4 +403,40 @@ DrawingController *Interpreter::get_drawing_controller() const {
 void Interpreter::set_drawing_controller(DrawingController *drawingController) {
     drawing_controller = drawingController;
     emit drawing_controller_changed();
+}
+
+void Interpreter::interpret(Backward *backward) {
+    drawing_controller->draw_line( -1 * std::visit( Caster<int> {}, scope_stack.get_var("length") ) );
+}
+
+void Interpreter::interpret(Circle *circle) {
+    drawing_controller->draw_circle( std::visit( Caster<int> {}, scope_stack.get_var("radius") ) );
+}
+
+void Interpreter::interpret(Clear *clear) {
+    drawing_controller->clear();
+}
+
+void Interpreter::interpret(Read *read) {
+    scope_stack.set_last_result( String(io_controller.read() ) );
+}
+
+void Interpreter::interpret(Forward *forward) {
+    drawing_controller->draw_line( std::visit( Caster<int> {}, scope_stack.get_var("length") ) );
+}
+
+void Interpreter::interpret(Reset *reset) {
+    drawing_controller->reset();
+}
+
+void Interpreter::interpret(Switch *switch_) {
+    drawing_controller->switch_mode();
+}
+
+void Interpreter::interpret(Turn *turn) {
+    drawing_controller->turn( std::visit( Caster<int> {}, scope_stack.get_var("angle") ) );
+}
+
+void Interpreter::interpret(Write *write) {
+    io_controller.write( std::visit( Caster<std::string> {}, scope_stack.get_last_result().value() ) );
 }

@@ -3,7 +3,7 @@
 
 #include <variant>
 
-class Interpreter;
+class Evaluator;
 
 class Assignable {
 public:
@@ -11,7 +11,7 @@ public:
 //    Assignable(const Assignable&) = delete;
 //    Assignable(Assignable&&) = default;
 
-    virtual void  be_evaluated(Interpreter * interpreter) = 0;
+    virtual void  be_evaluated(Evaluator *interpreter) = 0;
 };
 
 

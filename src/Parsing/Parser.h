@@ -12,7 +12,6 @@
 #include "../Program/Program.h"
 #include "../Program/LanguageElements/Arguments.h"
 #include "../Program/LanguageElements/Variables/Assignable.h"
-#include "../Program/LanguageElements/FunctionBody.h"
 #include "../Program/LanguageElements/VariableAssignment.h"
 #include "../Program/LanguageElements/FunctionCall.h"
 #include "../Program/LanguageElements/Logical/OrCondition.h"
@@ -53,7 +52,7 @@ public:
     Parser(QObject * parent = nullptr ): QObject(parent), lexer{ nullptr } {}
 
 public slots:
-    void parseProgram(Program *program);
+    void parseProgram(LanguageElementsHolder *program);
 
 private:
     std::optional<std::unique_ptr<FunctionDefinition>> tryToParseFuncDef();

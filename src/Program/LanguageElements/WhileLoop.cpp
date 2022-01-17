@@ -1,7 +1,7 @@
 #include "WhileLoop.h"
-#include "../../Interpreter/Interpreter.h"
+#include "LanguageElementVisitor.h"
 
-void WhileLoop::be_handled(Interpreter *interpreter) {
+void WhileLoop::be_handled(LanguageElementVisitor *interpreter) {
     interpreter->interpret(this);
 }
 

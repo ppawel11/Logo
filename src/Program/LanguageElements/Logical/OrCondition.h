@@ -17,7 +17,7 @@ public:
 
     const std::vector<std::unique_ptr<Assignable>> & getElements() const;
 
-    void be_evaluated(Interpreter *interpreter) override;
+    void be_evaluated(Evaluator *interpreter) override;
 };
 
 

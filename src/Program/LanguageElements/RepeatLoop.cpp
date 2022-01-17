@@ -1,7 +1,7 @@
 #include "RepeatLoop.h"
-#include "../../Interpreter/Interpreter.h"
+#include "LanguageElementVisitor.h"
 
-void RepeatLoop::be_handled(Interpreter *interpreter) {
+void RepeatLoop::be_handled(LanguageElementVisitor *interpreter) {
     interpreter->interpret(this);
 }
 

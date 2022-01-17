@@ -2,7 +2,7 @@
 
 #include <utility>
 
-void Scope::set_symbol(const std::string &name, const std::variant<Number, Bool, String, ListOfVariantValues> &value_) {
+void Scope::set_symbol(const std::string &name, const std::variant<Number, Bool, String, ListOfVariantValues> value_) {
     auto it = symbols.find( name );
     if( it != symbols.end() )
     {

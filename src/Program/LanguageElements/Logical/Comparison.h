@@ -29,7 +29,7 @@ public:
         second_expression{ std::move(second_expression_) }
     {}
 
-    void be_evaluated(Interpreter *interpreter) override;
+    void be_evaluated(Evaluator *interpreter) override;
 
     const std::unique_ptr<Assignable> & getFirstExpression() const;
 
