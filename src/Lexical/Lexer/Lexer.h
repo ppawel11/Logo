@@ -5,10 +5,16 @@
 #include "../../Source/StringStream/StringStreamSource.h"
 #include "../Token/Token.h"
 
+#include "../Exceptions/LexicalException.h"
 #include <memory>
 #include <map>
 
-class Lexer {
+#include <QtCore/QObject>
+
+class Lexer: public QObject {
+    Q_OBJECT
+
+    Q_PROPERTY(SourceInterface * source MEMBER scanner WRITE set_source READ get_source NOTIFY source_changed );
     SourceInterface * scanner;
     Token current_token;
     Position current_token_position;
@@ -29,7 +35,8 @@ class Lexer {
                 std::pair<std::string, TokenType>("or", TokenType::OR),
                 std::pair<std::string, TokenType>("false", TokenType::FALSE),
                 std::pair<std::string, TokenType>("true", TokenType::TRUE),
-                std::pair<std::string, TokenType>("return", TokenType::RETURN)
+                std::pair<std::string, TokenType>("return", TokenType::RETURN),
+                std::pair<std::string, TokenType>("var", TokenType::VAR)
             };
 
     std::map<char, TokenType> single_char_token_map =
@@ -76,13 +83,19 @@ public:
 
     void setMaxStringLength(int maxStringLength);
 
-    void setScanner(SourceInterface * _scanner);
+    void set_source(SourceInterface * _scanner);
+
+    SourceInterface *get_source() const;
 
 private:
     Token getStringToken();
     Token getNumericToken();
     Token getLiteralToken();
     Token getComparisionToken();
+
+    signals:
+    void source_changed();
+    void error(QString error);
 };
 
 #endif //TKOM_LEXER_H
